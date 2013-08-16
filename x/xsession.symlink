@@ -1,0 +1,9 @@
+# .xsession
+
+export GTK_IM_MODULE=xim
+
+xrdb -merge .Xresources
+
+feh --bg-scale /home/joel/Dropbox/Wallpapers/snake_hullo.jpg &
+
+$HOME/bin/xmonad
