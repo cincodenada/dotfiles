@@ -100,7 +100,7 @@ let g:netrw_list_hide='\(^\|\s\s\)\zs\.[^\.]\S\+'
 
 " Insert lines without going into insert mode
 nnoremap ,o o<ESC>
-nnoremap ,O o<ESC>
+nnoremap ,O O<ESC>
 
 " Load PHPDoc
 inoremap <C-P> <ESC>:call PhpDocSingle()<CR>i 
@@ -137,4 +137,8 @@ fu! Rebase()
 endfunction
 endif
 
+" This behavior is buggy, disable it
+let php_show_semicolon_error = 0
+
+set t_Co=256
 colorscheme candycode
