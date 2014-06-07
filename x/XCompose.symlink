@@ -5359,9 +5359,19 @@
 <Multi_key> <asciicircum> <Cyrillic_ER>		: "Р̂"		# CYRILLIC CAPITAL LETTER ER WITH COMBINING CIRCUMFLEX ACCENT
 
 <Multi_key> <backslash> <o> <slash>		: "🙌"		# PERSON RAISING BOTH HANDS IN CELEBRATION
-<Multi_key> <i> <n> <f> : "∞"
-<Multi_key> <p> <i>     : "π"
-<Multi_key> <o> <h> <m> : "Ω"
+<Multi_key> <i> <n> <f>		: "∞"
+<Multi_key> <p> <i>		: "π"
+<Multi_key> <o> <h> <m>		: "Ω"
 <Multi_key> <asciitilde> <asciitilde> : "≈"
 <Multi_key> <asciitilde> <equal> : "≈"
 <Multi_key> <equal> <asciitilde> : "≈"
+
+<Multi_key> <d> <d> <bar> : "♩" U2669 # QUARTER NOTE
+<Multi_key> <d> <d> <backslash> : "♪" U266A #EIGTH NOTE
+<Multi_key> <d> <d> <minus> : "♫" U266B 
+<Multi_key> <d> <d> <equal> : "♬" U266C
+
+<Multi_key> <minus> <caret> : "¯"
+
+<Multi_key> <o> <minus> : "θ"
+<Multi_key> <O> <minus> : "Θ"
