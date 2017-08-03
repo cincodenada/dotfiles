@@ -1,0 +1,3 @@
+[submodule "ext/autorandr"]
+	path = ext/autorandr
+	url = https://github.com/wertarbyte/autorandr
