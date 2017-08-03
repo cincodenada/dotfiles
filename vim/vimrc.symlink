@@ -6,6 +6,13 @@ set nocompatible
 "source $VIMRUNTIME/mswin.vim
 "behave mswin
 
+call plug#begin('~/.vim/plugged')
+
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-shell'
+
+call plug#end()
+
 " --------------------------------
 " Imported from vimrc_example.vim
 " --------------------------------

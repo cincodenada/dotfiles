@@ -38,3 +38,9 @@ setopt HIST_REDUCE_BLANKS
 setopt complete_aliases
 
 zle -N newtab
+
+# Above lies things from dotfiles repo
+# Below lies my own stuff
+# Copied from config menu
+unsetopt beep nomatch
+bindkey -v
