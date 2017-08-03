@@ -43,4 +43,3 @@ zle -N newtab
 # Below lies my own stuff
 # Copied from config menu
 unsetopt beep nomatch
-bindkey -v
