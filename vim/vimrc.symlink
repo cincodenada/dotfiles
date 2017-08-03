@@ -11,6 +11,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-shell'
 
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
+
 call plug#end()
 
 " --------------------------------
