@@ -1,1 +1,1 @@
-source $DOTFILES/ext/autorandr/bash_completion/autorandr
+source $DOTFILES/ext/autorandr/contrib/bash_completion/autorandr
