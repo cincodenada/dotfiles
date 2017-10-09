@@ -13,8 +13,21 @@ Plug 'xolox/vim-shell'
 
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-sleuth'
+
+Plug 'mbbill/undotree'
+
+Plug 'Valloric/YouCompleteMe'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+
+Plug 'idanarye/vim-vebugger'
 
 call plug#end()
+
+" FZF.vim stuff
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 
 " --------------------------------
 " Imported from vimrc_example.vim
@@ -108,14 +121,14 @@ set autochdir
 
 let g:netrw_list_hide='\(^\|\s\s\)\zs\.[^\.]\S\+'
 
+" FZF bindings
+inoremap <C-P> <ESC>:GFiles<CR>i 
+nnoremap <C-P> :GFiles<CR> 
+vnoremap <C-P> :GFiles<CR>
+
 " Insert lines without going into insert mode
 nnoremap ,o o<ESC>
 nnoremap ,O O<ESC>
-
-" Load PHPDoc
-inoremap <C-P> <ESC>:call PhpDocSingle()<CR>i 
-nnoremap <C-P> :call PhpDocSingle()<CR> 
-vnoremap <C-P> :call PhpDocRange()<CR>
 
 " Activate maps for Git Rebase
 nnoremap <buffer> <silent> S :Cycle<CR>
