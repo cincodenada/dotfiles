@@ -12,6 +12,7 @@
         co = checkout
         promote = !$DOTFILES/bin/git-promote
         wtf     = !$DOTFILES/bin/git-wtf
+        puush   = !$DOTFILES/bin/git-puush
         rank-contributers = !$DOTFILES/bin/git-rank-contributers
         count   = !git shortlog -sn
 [color]
