@@ -6,6 +6,7 @@ export QT_IM_MODULE=xim
 
 xrdb -merge .Xresources
 
-feh --bg-scale /home/joel/Dropbox/Wallpapers/snake_hullo.jpg &
+# Set wallpaper
+feh --bg-fill --randomize ~/Pictures/apod/*
 
 $HOME/bin/xmonad
