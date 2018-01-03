@@ -21,7 +21,10 @@ Plug 'Valloric/YouCompleteMe'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+Plug 'jremmen/vim-ripgrep'
+
 Plug 'idanarye/vim-vebugger'
+let g:rg_binary="~/.cargo/bin/rg"
 
 call plug#end()
 
