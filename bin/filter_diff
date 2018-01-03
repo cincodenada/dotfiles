@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 $regex = shift @ARGV;
 $cur_block = "";
-while(<STDIN>) {
+while(<>) {
     if(/^diff/) {
         $in_head=1;
         $cur_head="";
