@@ -1,4 +1,4 @@
 #!/bin/bash
 cp build/compile_commands.json .
 perl -p -i -e "s#/repo#$(dirname `pwd`)#g" compile_commands.json
-perl -p -i -e "s#c\+\+#& -I/usr/local/include#g" compile_commands.json
+perl -p -i -e "s#-I#-I/usr/local/include $&#" compile_commands.json
