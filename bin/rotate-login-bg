@@ -1,0 +1,1 @@
+ln -sf $(ls -1 *.* | shuf | head -n1) current_img

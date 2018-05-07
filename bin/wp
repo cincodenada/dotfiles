@@ -1,0 +1,22 @@
+#!/bin/bash -x
+
+op=$1
+shift
+
+case "$op" in
+  "change")
+    change_wallpaper $@
+    ;;
+  "rate")
+    rate_wallpaper $@
+    ;;
+  "view")
+    view_wallpaper $@
+    ;;
+  "info")
+    info_wallpaper $@
+    ;;
+  *)
+    echo "Unknown command $op"
+    exit 1
+esac

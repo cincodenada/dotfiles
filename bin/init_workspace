@@ -1,0 +1,6 @@
+#!/bin/bash
+if [[ $0 = "/usr/"* ]]; then
+  sleep 15
+fi
+autorandr -c
+change_wallpaper

@@ -1,0 +1,33 @@
+#!/bin/bash -x
+
+function s {
+  if [ $1 -eq 1 ]; then
+    echo ""
+  else
+    echo "s"
+  fi
+}
+
+timestamp=$(date -Isec)
+numratings=0
+numpics=0
+for pic in $(tail -n1 ~/.fehbg | cut -d" " -f4-); do
+  numpics=$(($numpics+1))
+  if [ -n "$1" ]; then
+    if [ $(expr index "x_-" $1) -eq 0 ]; then
+      echo -e "$1\t$pic\t$timestamp" >> ~/.bgratings
+      numratings=$(($numratings+1))
+      shift
+    fi
+  else
+    break
+  fi
+done  
+if [ $numpics -eq 0 ]; then
+  result="No pictures found!"
+elif [ $numratings -eq 0]; then
+  result="No ratings given!"
+else
+  result="Rated $numratings picture$(s $numratings)"
+fi
+notify-send "Wallpaper Rater" "$result"
