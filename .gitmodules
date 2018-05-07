@@ -1,3 +1,6 @@
 [submodule "ext/autorandr"]
 	path = ext/autorandr
 	url = https://github.com/phillipberndt/autorandr
+[submodule "bin/compton-invert-git"]
+	path = bin/compton-invert-git
+	url = https://github.com/Vifon/compton-invert.git
