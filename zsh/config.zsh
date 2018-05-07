@@ -43,3 +43,4 @@ zle -N newtab
 # Below lies my own stuff
 # Copied from config menu
 unsetopt beep nomatch
+unsetopt bang_hist # I wish there were a way to disable just inside "" but no such luck
