@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+shopt -s nullglob globstar
+
+typeit=0
+if [[ $1 == "--type" ]]; then
+	typeit=1
+	shift
+fi
+
+prefix=${PASSWORD_STORE_DIR-~/.password-store}
+password_files=( "$prefix"/**/*.gpg )
+password_files=( "${password_files[@]#"$prefix"/}" )
+password_files=( "${password_files[@]%.gpg}" )
+
+args=$(printf '%s\n' "${password_files[@]}" | dmenu "$@")
+
+splitat=`expr index "$args" "|"`
+if [[ $splitat -gt 0 ]]; then
+	name=${args:0:$(($splitat-1))}
+	extra=${args:$splitat}
+else
+	name=$args
+	extra=""
+fi
+
+echo $name
+echo $extra
+
+[[ -n $name ]] || exit
+
+if [[ $typeit -eq 0 ]]; then
+	pass generate -c "$name" $extra 2>/dev/null
+else
+	pass generate "$name" $extra 
+	pass show "$name" | { read -r pass; printf %s "$pass"; } |
+		xdotool type --clearmodifiers --file -
+fi
