@@ -42,6 +42,12 @@ Plug 'vim-scripts/mayansmoke'
 
 Plug 'nacitar/a.vim'
 
+Plug 'jceb/vim-orgmode'
+Plug 'vim-scripts/utl.vim'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-speeddating'
+let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
+
 call plug#end()
 
 " FZF.vim stuff
