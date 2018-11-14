@@ -40,6 +40,8 @@ Plug 'justinj/vim-pico8-syntax'
 
 Plug 'vim-scripts/mayansmoke'
 
+Plug 'nacitar/a.vim'
+
 call plug#end()
 
 " FZF.vim stuff
@@ -47,7 +49,9 @@ command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 
 let mapleader=" "
+let maplocalleader=" "
 nnoremap <Leader>f :YcmCompleter FixIt<CR>
+nnoremap <Leader>q :ClangFormat<CR>
 nnoremap <C-f> :ClangFormat<CR>
 vnoremap <C-f> :ClangFormat<CR>
 
@@ -132,9 +136,9 @@ au BufNewFile,BufRead *.as setf actionscript
 " --------------------------------
 " My custom commands
 " --------------------------------
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
 set expandtab!
 
 set nowrap
@@ -166,6 +170,9 @@ autocmd FileType cpp set formatprg='clang-format-3.9'
 inoremap <C-P> <ESC>:GFiles<CR>i 
 nnoremap <C-P> :GFiles<CR> 
 vnoremap <C-P> :GFiles<CR>
+
+" YCM rebindings
+nnoremap <Leader>p :YcmCompleter GoTo<CR>
 
 " Insert lines without going into insert mode
 nnoremap ,o o<ESC>
