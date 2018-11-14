@@ -231,7 +231,9 @@ if has('cscope')
   cnoreabbrev css cs show
   cnoreabbrev csh cs help
 
-  command -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+  if !exists(":Cscope")
+    command -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+  endif
 endif
 
 set t_Co=256
