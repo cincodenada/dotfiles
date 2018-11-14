@@ -17,8 +17,8 @@ for pic in $(tail -n1 ~/.fehbg | cut -d" " -f4-); do
     if [ $(expr index "x_-" $1) -eq 0 ]; then
       echo -e "$1\t$pic\t$timestamp" >> ~/.bgratings
       numratings=$(($numratings+1))
-      shift
     fi
+    shift
   else
     break
   fi
