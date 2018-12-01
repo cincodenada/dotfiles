@@ -1,0 +1,9 @@
+#!/usr/bin/awk -f
+BEGIN { FS="[\t :]" }
+{
+  secs = ($4*60+$5);
+  if(last_secs) {
+    print secs-last_secs"\t"$0
+  }
+  last_secs = secs
+}

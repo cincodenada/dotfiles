@@ -6,6 +6,61 @@ set nocompatible
 "source $VIMRUNTIME/mswin.vim
 "behave mswin
 
+call plug#begin('~/.vim/plugged')
+
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-shell'
+
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-sleuth'
+
+Plug 'airblade/vim-gitgutter'
+
+Plug 'mbbill/undotree'
+
+Plug 'Valloric/YouCompleteMe'
+Plug 'vim-syntastic/syntastic'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+
+Plug 'rodjek/vim-puppet'
+
+Plug 'jremmen/vim-ripgrep'
+let g:rg_binary="/home/joel/.cargo/bin/rg"
+
+Plug 'idanarye/vim-vebugger'
+
+Plug 'rhysd/vim-clang-format'
+let g:clang_format#command = 'clang-format-3.9'
+let g:clang_format#command = 'clang-format-3.9'
+
+Plug 'justinj/vim-pico8-syntax'
+
+Plug 'vim-scripts/mayansmoke'
+
+Plug 'nacitar/a.vim'
+
+Plug 'jceb/vim-orgmode'
+Plug 'vim-scripts/utl.vim'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-speeddating'
+let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
+
+call plug#end()
+
+" FZF.vim stuff
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+let mapleader=" "
+let maplocalleader=" "
+nnoremap <Leader>f :YcmCompleter FixIt<CR>
+nnoremap <Leader>q :ClangFormat<CR>
+nnoremap <C-f> :ClangFormat<CR>
+vnoremap <C-f> :ClangFormat<CR>
+
 " --------------------------------
 " Imported from vimrc_example.vim
 " --------------------------------
@@ -65,7 +120,6 @@ if has("autocmd")
     \ endif
 
   augroup END
-
 else
 
   set autoindent		" always set autoindenting on
@@ -88,24 +142,47 @@ au BufNewFile,BufRead *.as setf actionscript
 " --------------------------------
 " My custom commands
 " --------------------------------
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
 set expandtab!
 
 set nowrap
 set autochdir
 
+" Stupid ~ files
+set nobackup
+set nowritebackup
+set undofile
+
 let g:netrw_list_hide='\(^\|\s\s\)\zs\.[^\.]\S\+'
+let g:netrw_menu=0
+" Disable the fucking destructive one-key bindings goddamit
+augroup netrw_maps
+  autocmd!
+  autocmd filetype netrw call KillMaps()
+augroup END
+
+function! KillMaps()
+  nunmap <buffer> S
+  nunmap <buffer> a
+  nunmap <buffer> <c-h>
+endfunction
+
+" Set formatter to clang-format for c++ files
+autocmd FileType cpp set formatprg='clang-format-3.9'
+
+" FZF bindings
+inoremap <C-P> <ESC>:GFiles<CR>i 
+nnoremap <C-P> :GFiles<CR> 
+vnoremap <C-P> :GFiles<CR>
+
+" YCM rebindings
+nnoremap <Leader>p :YcmCompleter GoTo<CR>
 
 " Insert lines without going into insert mode
 nnoremap ,o o<ESC>
 nnoremap ,O O<ESC>
-
-" Load PHPDoc
-inoremap <C-P> <ESC>:call PhpDocSingle()<CR>i 
-nnoremap <C-P> :call PhpDocSingle()<CR> 
-vnoremap <C-P> :call PhpDocRange()<CR>
 
 " Activate maps for Git Rebase
 nnoremap <buffer> <silent> S :Cycle<CR>
@@ -139,6 +216,25 @@ endif
 
 " This behavior is buggy, disable it
 let php_show_semicolon_error = 0
+
+if has('cscope')
+  set cscopetag cscopeverbose
+
+  if has('quickfix')
+    set cscopequickfix=s-,c-,d-,i-,t-,e-
+  endif
+
+  cnoreabbrev csa cs add
+  cnoreabbrev csf cs find
+  cnoreabbrev csk cs kill
+  cnoreabbrev csr cs reset
+  cnoreabbrev css cs show
+  cnoreabbrev csh cs help
+
+  if !exists(":Cscope")
+    command -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+  endif
+endif
 
 set t_Co=256
 colorscheme candycode

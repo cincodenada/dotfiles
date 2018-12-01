@@ -1,0 +1,13 @@
+#!/bin/bash -x
+
+which=$1
+if [ -z $which ]; then
+  which=1
+fi
+
+field=$((which+3))
+pic=$(tail -n1 ~/.fehbg | cut -d" " -f$field)
+pic=${pic#*apod/}
+pic=${pic%.*}
+date=$(date -d"$pic" +"%y%m%d")
+xdg-open "https://apod.nasa.gov/apod/ap$date.html"
