@@ -7,3 +7,6 @@
 [submodule "bin/compton-invert-git"]
 	path = bin/compton-invert-git
 	url = https://github.com/Vifon/compton-invert.git
+[submodule "bin/rofimoji"]
+	path = bin/rofimoji
+	url = https://github.com/fdw/rofimoji.git
