@@ -41,6 +41,8 @@ let g:clang_format#command = 'clang-format-6.0'
 Plug 'justinj/vim-pico8-syntax'
 
 Plug 'vim-scripts/mayansmoke'
+Plug 'vim-scripts/candycode.vim'
+Plug 'rainux/vim-desert-warm-256'
 
 Plug 'nacitar/a.vim'
 
@@ -287,7 +289,7 @@ if has('cscope')
 endif
 
 set t_Co=256
-colorscheme candycode
+colorscheme desert-warm-256
 
 " Syntax debugging
 " Show the stack of syntax hilighting classes affecting whatever is under the
