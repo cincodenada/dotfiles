@@ -14,16 +14,18 @@ git_branch() {
 }
 
 git_dirty() {
-  st=$($git status 2>/dev/null | grep -v "^$" | tail -n 1)
-  if [[ $st == "" ]]
+  branch_name=$(git_prompt_info)
+  if [[ "$branch_name" == "" ]]
   then
     echo ""
   else
-    if [[ "$st" =~ ^nothing ]]
+    st=$(git diff --shortstat 2> /dev/null | tail -n1)
+    #st=$($git status 2>/dev/null | grep -v "^$" | tail -n 1)
+    if [[ "$st" == "" ]]
     then
-      echo "on %{$fg_bold[green]%}$(git_prompt_info)%{$reset_color%}"
+      echo "on %{$fg_bold[green]%}$branch_name%{$reset_color%}"
     else
-      echo "on %{$fg_bold[red]%}$(git_prompt_info)%{$reset_color%}"
+      echo "on %{$fg_bold[red]%}$branch_name%{$reset_color%}"
     fi
   fi
 }
