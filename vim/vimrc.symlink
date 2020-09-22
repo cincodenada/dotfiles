@@ -27,6 +27,7 @@ Plug 'junegunn/fzf.vim'
 "Plug 'ctrlpvim/ctrlp.vim'
 
 Plug 'bfrg/vim-cpp-modern'
+Plug 'rust-lang/rust.vim'
 
 Plug 'rodjek/vim-puppet'
 
@@ -50,6 +51,9 @@ Plug 'jceb/vim-orgmode'
 Plug 'vim-scripts/utl.vim'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
+
+Plug 'altercation/vim-colors-solarized'
+
 let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
 
 call plug#end()
@@ -173,9 +177,6 @@ function! KillMaps()
   nunmap <buffer> <c-h>
 endfunction
 
-" Set formatter to clang-format for c++ files
-autocmd FileType cpp set formatprg='clang-format-6.0'
-
 " FZF bindings
 inoremap <C-P> <ESC>:GFiles<CR>i 
 nnoremap <C-P> :GFiles<CR> 
@@ -219,9 +220,9 @@ endfunction
 endif
 
 " From http://vim.wikia.com/wiki/Improved_hex_editing 
-nnoremap <C-H> :Hexmode<CR>
-inoremap <C-H> <Esc>:Hexmode<CR>
-vnoremap <C-H> :<C-U>Hexmode<CR>
+"nnoremap <C-H> :Hexmode<CR>
+"inoremap <C-H> <Esc>:Hexmode<CR>
+"vnoremap <C-H> :<C-U>Hexmode<CR>
 
 " ex command for toggling hex mode - define mapping if desired
 command! -bar Hexmode call ToggleHex()

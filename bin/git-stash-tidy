@@ -1,0 +1,14 @@
+#!/bin/bash
+
+git stash list --format="%ci" | while read date; do
+    git stash show stash@{"$date"} -u
+    read -p "Keep? (y/N) " keep < /dev/tty
+    case $keep in
+	y*)
+	    # Do nothing
+	    ;;
+	*)
+	    git stash drop stash@{"$date"}
+	    ;;
+    esac
+done
