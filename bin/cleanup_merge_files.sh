@@ -1,2 +1,2 @@
 #!/bin/bash
-find -regextype posix-extended -regex ".*_(BACKUP|BASE|LOCAL|REMOTE)_.*" $@
+find -E . -regex ".*_(BACKUP|BASE|LOCAL|REMOTE)_.*" $@
