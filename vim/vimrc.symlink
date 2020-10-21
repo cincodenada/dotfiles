@@ -172,9 +172,9 @@ augroup netrw_maps
 augroup END
 
 function! KillMaps()
-  nunmap <buffer> S
-  nunmap <buffer> a
-  nunmap <buffer> <c-h>
+  silent! nunmap <buffer> S
+  silent! nunmap <buffer> a
+  silent! nunmap <buffer> <c-h>
 endfunction
 
 " FZF bindings
@@ -309,3 +309,5 @@ endfunction
 
 nnoremap <F6> :call <sid>SynStack()<CR>
 nnoremap <F7> :call <sid>HiGroup()<CR>"
+
+set grepprg=rg\ -n
