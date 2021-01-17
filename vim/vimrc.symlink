@@ -290,7 +290,7 @@ if has('cscope')
 endif
 
 set t_Co=256
-colorscheme desert-warm-256
+colorscheme candycode
 
 " Syntax debugging
 " Show the stack of syntax hilighting classes affecting whatever is under the
