@@ -10,7 +10,7 @@ case "$op" in
   "rate")
     rate_wallpaper $@
     ;;
-  "view")
+  "show" | "view")
     view_wallpaper $@
     ;;
   "info")

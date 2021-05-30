@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DIR=${1%.deb}
+
+mkdir -p $DIR/meta
+cd $DIR/meta
+ar x ../../$1
+cd ..
+tar --checkpoint=100 -xzf meta/data.tar.gz |& tr '\n' '\r'
+echo

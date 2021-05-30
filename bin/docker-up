@@ -1,0 +1,8 @@
+#!/bin/bash
+TAG=$1
+if [ -z $TAG ]; then
+    echo "Must specify an image name"
+    exit 1
+fi
+shift
+docker build $@ -t $1 .

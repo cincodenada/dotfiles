@@ -1,15 +1,19 @@
 #!/bin/bash
-if [ -f build/compile_commands.json ]; then
-    cp build/compile_commands.json .
-    perl -p -i -e "s#/repo#$(dirname `pwd`)#g" compile_commands.json
-    perl -p -i -e "s#-I#-I/usr/local/include $&#" compile_commands.json
-    echo "Copied and edited compile_commands"
-    exit 0
-elif ! grep "CMAKE_EXPORT_COMPILE_COMMANDS" CMakeLists.txt > /dev/null; then
+if ! grep "CMAKE_EXPORT_COMPILE_COMMANDS" CMakeLists.txt > /dev/null; then
     sed -i '0,/^set/{/^set/i\
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
     }' CMakeLists.txt
     echo "Added CMAKE_EXPORT_COMPILE_COMMANDS to CMakeLists.txt"
+    if [ -f build/compile_commands.json ]; then
+	rm build/compile_commands.json
+	echo "Removed stale compile_commands.json"
+    fi
+    exit 0
+elif [ -f build/compile_commands.json ]; then
+    cp build/compile_commands.json .
+    perl -p -i -e "s#/repo#$(dirname `pwd`)#g" compile_commands.json
+    perl -p -i -e "s#-I#-I/usr/local/cdx/deps-1.6 $&#" compile_commands.json
+    echo "Copied and edited compile_commands"
     exit 0
 else
     echo "CMAKE_EXPORT_COMPILE_COMMANDS present, but no compile_commands.json"
