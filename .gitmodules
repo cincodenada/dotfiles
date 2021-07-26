@@ -7,3 +7,6 @@
 [submodule "bin/compton-invert-git"]
 	path = bin/compton-invert-git
 	url = https://github.com/Vifon/compton-invert.git
+[submodule "bin/bb-repo"]
+	path = bin/bb-repo
+	url = https://github.com/craftamap/bb.git
