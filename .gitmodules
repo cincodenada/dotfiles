@@ -10,3 +10,6 @@
 [submodule "bin/rofimoji"]
 	path = bin/rofimoji
 	url = https://github.com/fdw/rofimoji.git
+[submodule "bin/bb-repo"]
+	path = bin/bb-repo
+	url = https://github.com/craftamap/bb.git

@@ -1,1 +1,1 @@
-git branch --list --sort=committerdate $@
+git branch --sort=committerdate --no-merged $@
