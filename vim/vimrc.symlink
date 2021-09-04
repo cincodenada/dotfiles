@@ -30,8 +30,11 @@ let g:rg_binary=system('which rg')
 """"""
 " IDE stuff
 """"""
-Plug 'Valloric/YouCompleteMe'
+" Plug 'Valloric/YouCompleteMe'
 Plug 'vim-syntastic/syntastic'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+let g:coc_global_extensions = [ 'coc-tsserver' ]
 
 " Git stuff
 Plug 'airblade/vim-gitgutter'
