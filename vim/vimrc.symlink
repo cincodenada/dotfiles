@@ -14,45 +14,65 @@ Plug 'xolox/vim-shell'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-sleuth'
-
-Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-speeddating'
 
 Plug 'mbbill/undotree'
-
-Plug 'Valloric/YouCompleteMe'
-Plug 'vim-syntastic/syntastic'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 "Plug 'ctrlpvim/ctrlp.vim'
-
-Plug 'bfrg/vim-cpp-modern'
-Plug 'rust-lang/rust.vim'
-
-Plug 'rodjek/vim-puppet'
+Plug 'jceb/vim-orgmode'
 
 Plug 'jremmen/vim-ripgrep'
-let g:rg_binary="/home/joel/.cargo/bin/rg"
+let g:rg_binary=system('which rg')
+
+""""""
+" IDE stuff
+""""""
+Plug 'Valloric/YouCompleteMe'
+Plug 'vim-syntastic/syntastic'
+
+" Git stuff
+Plug 'airblade/vim-gitgutter'
+
+" Node stuff
+Plug 'ruanyl/coverage.vim'
+Plug 'eliba2/vim-node-inspect'
+Plug 'heavenshell/vim-jsdoc', { 
+  \ 'for': ['javascript', 'javascript.jsx','typescript'], 
+  \ 'do': 'make install'
+\}
 
 Plug 'idanarye/vim-vebugger'
 
+" Formatting suff
 Plug 'rhysd/vim-clang-format'
 let g:clang_format#command = 'clang-format-6.0'
+Plug 'w0rp/ale'
 
+""""
+" Other misc
+""""
+" Syntax
+Plug 'bfrg/vim-cpp-modern'
+Plug 'rust-lang/rust.vim'
+Plug 'rodjek/vim-puppet'
 Plug 'justinj/vim-pico8-syntax'
+Plug 'joukevandermaas/vim-ember-hbs'
+Plug 'jelera/vim-javascript-syntax'
 
+" Colors
 Plug 'vim-scripts/mayansmoke'
 Plug 'vim-scripts/candycode.vim'
 Plug 'rainux/vim-desert-warm-256'
+Plug 'altercation/vim-colors-solarized'
 
+" Header/cpp jump
 Plug 'nacitar/a.vim'
 
-Plug 'jceb/vim-orgmode'
+" Url linking
 Plug 'vim-scripts/utl.vim'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-speeddating'
-
-Plug 'altercation/vim-colors-solarized'
 
 let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
 
