@@ -112,6 +112,8 @@ augroup END
 function! SetJSFormat()
   nnoremap <Leader>ln :ALENext<CR>
   nnoremap <Leader>lp :ALEPrev<CR>
+  nnoremap <Leader>lr :call QuickFixNpxCommand('eslint . -f unix', v:false)<CR>
+  nnoremap <Leader>la :call QuickFixNpxCommand('eslint . -f unix', v:true)<CR>
   nnoremap <Leader>q :ALEFix eslint<CR>
   nnoremap <C-f> :ALEFix eslint<CR>
   vnoremap <C-f> :ALEFix eslint<CR>
@@ -138,19 +140,43 @@ nnoremap <C-n> :NodeInspectStepOver<cr>
 " Add Node to path for tsserver
 let $PATH.=':/Users/joel/.nvm/versions/node/v12.22.1/bin'
 
-function! QuickFixNpmCommand(cmd)
-  let l:cwd = getcwd()
-  let l:path = l:cwd
+function! FindFile(file, fromDir, top_level)
+  let l:path = a:fromDir
+  let l:foundPath = v:false
   while l:path != '/'
-    if filereadable(l:path . '/package.json')
-      let l:cmdline = 'npm --prefix ' . l:path . ' run ' . a:cmd
-      echo 'Running ' . l:cmdline
-      cexpr system(l:cmdline)
-      return
+    if filereadable(l:path . '/' . a:file)
+      let l:foundPath = l:path
+      if !a:top_level
+        break
+      endif
     endif
     let l:path = fnamemodify(l:path, ":h")
   endwhile
-  echo "Couldn't find package.json staring from " . l:cwd
+  return l:foundPath
+endfunction
+
+function! QuickFixNpxCommand(cmd, top_level)
+  let l:cwd = getcwd()
+  let l:path = FindFile('package.json', l:cwd, a:top_level)
+  if empty(l:path)
+    echo "Couldn't find package.json staring from " . l:cwd
+  else
+    let l:cmdline = 'cd ' . l:path . '; npx ' . a:cmd
+    echo 'Running ' . l:cmdline
+    cexpr system(l:cmdline)
+  endif
+endfunction
+
+function! QuickFixNpmCommand(cmd, top_level)
+  let l:cwd = getcwd()
+  let l:path = FindFile('package.json', l:cwd, a:top_level)
+  if empty(l:path)
+    echo "Couldn't find package.json staring from " . l:cwd
+  else
+    let l:cmdline = 'npm --prefix ' . l:path . ' run --silent ' . a:cmd
+    echo 'Running ' . l:cmdline
+    cexpr system(l:cmdline)
+  endif
 endfunction
 
 " --------------------------------
