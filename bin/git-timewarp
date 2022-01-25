@@ -1,7 +1,18 @@
+set -x
+case "$1" in
+  "-c") REWRITE_COMMIT=1; shift ;;
+esac
+
 if [ -z "$1" ]; then
   echo "Must provide new time"
   exit 1
 fi
 TIME=$1; shift
-TIME=$(date -d"$TIME" -Is)
-GIT_COMMITTER_DATE=$TIME GIT_AUTHOR_DATE=$GIT_COMMITTER_DATE git commit "$@"
+if [ ! "$(uname)" = 'Darwin' ]; then
+  TIME=$(date -d"$TIME" -Is)
+fi
+if [ -n "$REWRITE_COMMIT" ]; then
+  GIT_COMMITTER_DATE=$TIME GIT_AUTHOR_DATE=$TIME git commit "$@"
+else
+  GIT_AUTHOR_DATE=$TIME git commit "$@"
+fi
