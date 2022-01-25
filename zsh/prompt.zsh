@@ -1,6 +1,6 @@
 autoload colors && colors
-# cheers, @ehrenmurdick
-# http://github.com/ehrenmurdick/config/blob/master/zsh/prompt.zsh
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git
 
 if (( $+commands[git] ))
 then
@@ -9,35 +9,19 @@ else
   git="/usr/bin/git"
 fi
 
-git_branch() {
-  echo $($git symbolic-ref HEAD 2>/dev/null | awk -F/ {'print $NF'})
-}
-
 git_dirty() {
-  branch_name=$(git_prompt_info)
+  branch_name=$(zstyle ':vcs_info:git*' formats "%b")
   if [[ "$branch_name" == "" ]]
   then
     echo ""
   else
-    st=$(git diff --shortstat 2> /dev/null | tail -n1)
-    #st=$($git status 2>/dev/null | grep -v "^$" | tail -n 1)
+    st=$(zstyle ':vcs_info:git*' formats "%u")
     if [[ "$st" == "" ]]
     then
-      echo "on %{$fg_bold[green]%}$branch_name%{$reset_color%}"
     else
       echo "on %{$fg_bold[red]%}$branch_name%{$reset_color%}"
     fi
   fi
-}
-
-git_prompt_info () {
- ref=$($git symbolic-ref HEAD 2>/dev/null) || return
-# echo "(%{\e[0;33m%}${ref#refs/heads/}%{\e[0m%})"
- echo "${ref#refs/heads/}"
-}
-
-unpushed () {
-  $git cherry -v @{upstream} 2>/dev/null
 }
 
 need_push () {
@@ -49,28 +33,21 @@ need_push () {
   fi
 }
 
-rb_prompt(){
-  if (( $+commands[rbenv] ))
-  then
-    version=$(rbenv version-name 2> /dev/null)
-    if [[ "$version" == "" ]] then version="-" fi
-
-    echo "%{$fg_bold[yellow]%}$version%{$reset_color%}"
-  else
-    echo ""
-  fi
-}
-
 directory_name(){
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
-export PROMPT=$'\n$(rb_prompt) in $(directory_name) $(git_dirty)$(need_push)\n› '
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' unstagedstr 1
+zstyle ':vcs_info:git*' formats 'on %{%1(u.'$fg_bold[red]'.'$fg_bold[green]')%}%b%{'$reset_color'%}'
+export PROMPT=$'\n$(directory_name) ${vcs_info_msg_0_}\n› '
+
 set_prompt () {
   export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
 }
 
 precmd() {
+  vcs_info
   title "zsh" "%m" "%55<...<%~"
   set_prompt
 }
