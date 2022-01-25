@@ -86,6 +86,8 @@ Plug 'justinj/vim-pico8-syntax'
 Plug 'joukevandermaas/vim-ember-hbs'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'GutenYe/json5.vim'
+Plug 'arzg/vim-sh'
+Plug 'Galicarnax/vim-regex-syntax'
 
 " Colors
 Plug 'vim-scripts/mayansmoke'
