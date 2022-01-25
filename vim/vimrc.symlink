@@ -125,14 +125,25 @@ function! SetClangFormat()
 endfunction
 
 " Node debugger keys
-nnoremap <Leader>ds :NodeInspectStart<cr>
-nnoremap <Leader>dr :NodeInspectRun<cr>
 nnoremap <Leader>dc :NodeInspectConnect("127.0.0.1:9229")<cr>
+nnoremap <Leader>dt :NodeInspectStart("test")<cr>
+nnoremap <Leader>ds :NodeInspectStart("run")<cr>
+nnoremap <Leader>dr :NodeInspectRun<cr>
 nnoremap <Leader>di :NodeInspectStepInto<cr>
 nnoremap <Leader>do :NodeInspectStepOut<cr>
 nnoremap <Leader>dn :NodeInspectStepOver<cr>
 nnoremap <Leader>db :NodeInspectToggleBreakpoint<cr>
+nnoremap <Leader>dw :NodeInspectAddWatch<cr>
 nnoremap <Leader>dq :NodeInspectStop<cr>
+
+nnoremap <silent><F4> :NodeInspectStart<cr>
+nnoremap <silent><F5> :NodeInspectRun<cr>
+nnoremap <silent><F6> :NodeInspectConnect("127.0.0.1:9229")<cr>
+nnoremap <silent><F7> :NodeInspectStepInto<cr>
+nnoremap <silent><F8> :NodeInspectStepOver<cr>
+nnoremap <silent><F9> :NodeInspectToggleBreakpoint<cr>
+nnoremap <silent><F10> :NodeInspectStop<cr>
+
 " Quick stepping
 nnoremap <C-S-n> :NodeInspectStepInto<cr>
 nnoremap <C-n> :NodeInspectStepOver<cr>
@@ -140,7 +151,7 @@ nnoremap <C-n> :NodeInspectStepOver<cr>
 " Add Node to path for tsserver
 let $PATH.=':/Users/joel/.nvm/versions/node/v12.22.1/bin'
 
-function! FindFile(file, fromDir, top_level)
+function! s:FindFile(file, fromDir, top_level)
   let l:path = a:fromDir
   let l:foundPath = v:false
   while l:path != '/'
@@ -155,27 +166,37 @@ function! FindFile(file, fromDir, top_level)
   return l:foundPath
 endfunction
 
-function! QuickFixNpxCommand(cmd, top_level)
+function! s:GetNodeRootCommand(cmd, top_level)
   let l:cwd = getcwd()
-  let l:path = FindFile('package.json', l:cwd, a:top_level)
+  let l:path = s:FindFile('package.json', l:cwd, a:top_level)
   if empty(l:path)
     echo "Couldn't find package.json staring from " . l:cwd
   else
-    let l:cmdline = 'cd ' . l:path . '; npx ' . a:cmd
+    return 'cd ' . l:path . '; ' . a:cmd
+  endif
+endfunction
+
+function! NpmInspectConnect(cmd)
+  let l:cmd = s:GetNodeRootCommand('NODE_OPTIONS="--inspect=localhost:9229" npm ' . a:cmd, v:false)
+  let l:cmdline = printf('(%s) &', l:cmd)
+  echom "Running " . l:cmdline
+  let result = system(l:cmdline)
+  call nodeinspect#NodeInspectConnect("127.0.0.1:9229")
+endfunction
+
+function! QuickFixNpxCommand(cmd, top_level)
+  let l:cmd = s:GetNodeRootCommand('npx ' . a:cmd, a:top_level)
+  if l:cmd
     echo 'Running ' . l:cmdline
     cexpr system(l:cmdline)
   endif
 endfunction
 
 function! QuickFixNpmCommand(cmd, top_level)
-  let l:cwd = getcwd()
-  let l:path = FindFile('package.json', l:cwd, a:top_level)
-  if empty(l:path)
-    echo "Couldn't find package.json staring from " . l:cwd
-  else
-    let l:cmdline = 'npm --prefix ' . l:path . ' run --silent ' . a:cmd
-    echo 'Running ' . l:cmdline
-    cexpr system(l:cmdline)
+  let l:cmd = s:GetNodeRootCommand('npm run --silent ' . a:cmd, a:top_level)
+  if l:cmd
+    echo 'Running ' . l:cmd
+    cexpr system(l:cmd)
   endif
 endfunction
 
