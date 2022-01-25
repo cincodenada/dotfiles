@@ -53,6 +53,7 @@ Plug 'idanarye/vim-vebugger'
 Plug 'rhysd/vim-clang-format'
 let g:clang_format#command = 'clang-format-6.0'
 Plug 'w0rp/ale'
+Plug 'kamykn/spelunker.vim'
 
 """"
 " Other misc
@@ -108,6 +109,23 @@ augroup formatter
   autocmd filetype javascript call SetJSFormat()
   autocmd filetype cpp call SetClangFormat()
 augroup END
+
+" Remap spell commands to use spelunker
+nnoremap zl Zl
+nnoremap zL ZL
+nnoremap zc Zc
+nnoremap zC ZC
+nnoremap zf Zf
+nnoremap zF ZF
+"" I don't know why these are necessary per docs but hey
+nmap zg Zg
+nmap zG ZG
+nmap zw Zw
+nmap zW ZW
+nmap zug Zug
+nmap zuw Zuw
+nmap zuG ZUG
+nmap zuW ZUW
 
 function! SetJSFormat()
   nnoremap <Leader>ln :ALENext<CR>
