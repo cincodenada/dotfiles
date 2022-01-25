@@ -24,6 +24,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 "Plug 'ctrlpvim/ctrlp.vim'
 Plug 'jceb/vim-orgmode'
+Plug 'svermeulen/vim-macrobatics'
 
 Plug 'jremmen/vim-ripgrep'
 let g:rg_binary=system('which rg')
@@ -36,6 +37,25 @@ Plug 'vim-syntastic/syntastic'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [ 'coc-tsserver' ]
+
+Plug 'neoclide/coc-snippets'
+Plug 'honza/vim-snippets'
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+" Use <C-j> for select text for visual placeholder of snippet.
+vmap <C-j> <Plug>(coc-snippets-select)
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-j>'
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-k>'
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+" Use <leader>x for convert visual selected code to snippet
+xmap <leader>x  <Plug>(coc-convert-snippet)
+
+nnoremap <leader>cc :CocCommand<CR>
+nnoremap <leader>ir :CocCommand document.renameCurrentWord<CR>
+
 
 " Git stuff
 Plug 'airblade/vim-gitgutter'
@@ -457,5 +477,10 @@ endfunction
 
 nnoremap <F6> :call <sid>SynStack()<CR>
 nnoremap <F7> :call <sid>HiGroup()<CR>"
+
+" Abbreviations
+" Replace lodash foreach
+cab _for % s/^\(\s\+\)_.forEach(\(.*\), (\?\([^,]\+\))\? => {\(\_.\{-\}\n\1\)})/\1for (const \3 of \2) {\4}/gc  		
+cab _find % s/_.find(\(.*\), (\?\([^,]*\)))\? => { return \(\_.\{-\}\) })/\1.find(\2 => \3)/gc
 
 set grepprg=rg\ -n
