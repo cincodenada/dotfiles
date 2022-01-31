@@ -37,9 +37,51 @@ directory_name(){
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
+# Check untracked files
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
++vi-git-untracked(){
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+        git status --porcelain | grep -q '^?? ' 2> /dev/null ; then
+        # This will show the marker if there are any untracked files in repo.
+        # If instead you want to show the marker only if there are untracked
+        # files in $PWD, use:
+        #[[ -n $(git ls-files --others --exclude-standard) ]] ; then
+        hook_com[staged]+='T'
+    fi
+}
+
+# Check vs remote
+zstyle ':vcs_info:git*+set-message:*' hooks git-st
+function +vi-git-st() {
+    local ahead behind
+    local -a gitstatus
+
+    # Exit early in case the worktree is on a detached HEAD
+    git rev-parse ${hook_com[branch]}@{upstream} >/dev/null 2>&1 || return 0
+
+    local -a ahead_and_behind=(
+        $(git rev-list --left-right --count HEAD...${hook_com[branch]}@{upstream} 2>/dev/null)
+    )
+
+    ahead=${ahead_and_behind[1]}
+    behind=${ahead_and_behind[2]}
+
+    (( $ahead )) && gitstatus+=( "+${ahead}" )
+    (( $behind )) && gitstatus+=( "-${behind}" )
+
+    hook_com[misc]+=${(j:/:)gitstatus}
+}
+
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' unstagedstr 1
-zstyle ':vcs_info:git*' formats 'on %{%1(u.'$fg_bold[red]'.'$fg_bold[green]')%}%b%{'$reset_color'%}'
+zstyle ':vcs_info:git:*' stagedstr 1
+
+BRANCH_COLOR='%1(c.'$fg_bold[blue]'.%1(u.'$fg_bold[red]'.'$fg_bold[green]'))'
+# If there are staged and unstaged changes, add an asterisk so we can distinguish between that and only staged
+BRANCH_SUFFIX='%1(u.%1(c.*.).)'
+BASE_FORMAT="on %{$BRANCH_COLOR%}%b$BRANCH_SUFFIX%{$reset_color%} $fg_bold[yellow]%m$reset_color"
+zstyle ':vcs_info:git:*' actionformats "$BASE_FORMAT (%a)"
+zstyle ':vcs_info:git:*' formats "$BASE_FORMAT"
 export PROMPT=$'\n$(directory_name) ${vcs_info_msg_0_}\n› '
 
 set_prompt () {
