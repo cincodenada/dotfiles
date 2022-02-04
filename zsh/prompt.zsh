@@ -37,6 +37,10 @@ directory_name(){
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
+exit_code(){
+  echo "%(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
+}
+
 # Check untracked files
 zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
 +vi-git-untracked(){
@@ -84,10 +88,6 @@ zstyle ':vcs_info:git:*' actionformats "$BASE_FORMAT (%a)"
 zstyle ':vcs_info:git:*' formats "$BASE_FORMAT"
 export PROMPT=$'\n$(directory_name) ${vcs_info_msg_0_}\n› '
 
-set_prompt () {
-  export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
-}
-
 precmd() {
   vcs_info
   title "zsh" "%m" "%55<...<%~"
@@ -96,7 +96,7 @@ precmd() {
 
 function zle-line-init zle-keymap-select {
     VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]% %{$reset_color%}"
-    RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/} $EPS1"
+    RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}$(exit_code)$EPS1"
     zle reset-prompt
 }
 zle -N zle-line-init
