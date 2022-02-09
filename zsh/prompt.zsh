@@ -33,9 +33,7 @@ need_push () {
   fi
 }
 
-directory_name(){
-  echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
-}
+DIRECTORY_NAME="%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 
 exit_code(){
   echo "%(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
@@ -86,12 +84,21 @@ BRANCH_SUFFIX='%1(u.%1(c.*.).)'
 BASE_FORMAT="on %{$BRANCH_COLOR%}%b$BRANCH_SUFFIX%{$reset_color%} $fg_bold[yellow]%m$reset_color"
 zstyle ':vcs_info:git:*' actionformats "$BASE_FORMAT (%a)"
 zstyle ':vcs_info:git:*' formats "$BASE_FORMAT"
-export PROMPT=$'\n$(directory_name) ${vcs_info_msg_0_}\n› '
+export PROMPT=$'\n$DIRECTORY_NAME ${vcs_info_msg_0_}\n› '
+
+# Keep prompt noise out of set -x for other things
+get_x() {
+  if [ -z "$ZSH_PROMPT_DEBUG" ]; then
+    echo +x
+  else
+    echo -x
+  fi
+}
 
 precmd() {
+  set $(get_x)
   vcs_info
   title "zsh" "%m" "%55<...<%~"
-  set_prompt
 }
 
 function zle-line-init zle-keymap-select {
