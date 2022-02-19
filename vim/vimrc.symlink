@@ -1,10 +1,8 @@
 " Exisiting in the Windows VIM install
 set nocompatible
-" Imported specific stuff from here instead...
-" source $VIMRUNTIME/vimrc_example.vim 
-" None of this Windows shit...
-"source $VIMRUNTIME/mswin.vim
-"behave mswin
+
+let mapleader=" "
+let maplocalleader=" "
 
 call plug#begin('~/.vim/plugged')
 
@@ -50,11 +48,11 @@ let g:coc_snippet_next = '<c-j>'
 let g:coc_snippet_prev = '<c-k>'
 " Use <C-j> for both expand and jump (make expand higher priority.)
 imap <C-j> <Plug>(coc-snippets-expand-jump)
-" Use <leader>x for convert visual selected code to snippet
-xmap <leader>x  <Plug>(coc-convert-snippet)
+" Use <Leader>x for convert visual selected code to snippet
+xmap <Leader>x  <Plug>(coc-convert-snippet)
 
-nnoremap <leader>cc :CocCommand<CR>
-nnoremap <leader>ir :CocCommand document.renameCurrentWord<CR>
+nnoremap <Leader>cc :CocCommand<CR>
+nnoremap <Leader>ir :CocCommand document.renameCurrentWord<CR>
 
 
 " Git stuff
@@ -107,9 +105,6 @@ Plug 'markonm/traces.vim'
 call plug#end()
 
 let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
-
-let mapleader=" "
-let maplocalleader=" "
 
 " --------------------------------
 " File Formats
