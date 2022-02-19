@@ -39,6 +39,10 @@ exit_code(){
   echo "%(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
 }
 
+itime() {
+  date -j -u -v+1H | awk -F'[ :]' '{printf "@%06.2f", ($6+$5*60+$4*3600)/86.4}'
+}
+
 # Check untracked files
 zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
 +vi-git-untracked(){
@@ -84,7 +88,7 @@ BRANCH_SUFFIX='%1(u.%1(c.*.).)'
 BASE_FORMAT="on %{$BRANCH_COLOR%}%b$BRANCH_SUFFIX%{$reset_color%} $fg_bold[yellow]%m$reset_color"
 zstyle ':vcs_info:git:*' actionformats "$BASE_FORMAT (%a)"
 zstyle ':vcs_info:git:*' formats "$BASE_FORMAT"
-export PROMPT=$'\n$DIRECTORY_NAME ${vcs_info_msg_0_}\n› '
+export PROMPT=$'\n%{$fg_bold[blue]%}$(itime)%{$reset_color%} $DIRECTORY_NAME ${vcs_info_msg_0_}\n› '
 
 # Keep prompt noise out of set -x for other things
 get_x() {
@@ -102,8 +106,14 @@ precmd() {
 }
 
 function zle-line-init zle-keymap-select {
+    NVM_VERSION=${${NVM_BIN#*node/}%/bin}
+    if [ -z NVM_VERSION ]; then
+      NVM_PROMPT=""
+    else
+      NVM_PROMPT="[npm $NVM_VERSION]"
+    fi
     VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]% %{$reset_color%}"
-    RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}$(exit_code)$EPS1"
+    RPS1="$NVM_PROMPT${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}$(exit_code)$EPS1"
     zle reset-prompt
 }
 zle -N zle-line-init

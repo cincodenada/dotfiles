@@ -4,6 +4,11 @@ export DOTFILES=$HOME/.dotfiles
 # your project folder that we can `c [tab]` to
 export PROJECTS=~/Projects
 
+# Load NVM, this has to happen here so that other files below can reference it
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 # use .localrc for SUPER SECRET CRAP that you don't
 # want in your public, versioned repo.
 if [[ -a ~/.localrc ]]
@@ -44,7 +49,4 @@ unset config_files
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
