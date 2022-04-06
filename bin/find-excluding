@@ -1,0 +1,21 @@
+#!/bin/bash -x
+
+IFS=',' read -ra excludes <<< $1
+shift
+
+search=""
+while [[ $1 != "-"* ]]; do
+  search="$search $1"
+  shift
+done
+
+if [ -z "$search" ]; then
+  search="."
+fi
+
+exclude=""
+for x in $excludes; do
+  exclude="$exclude -name $x -prune"
+done
+
+find $search $exclude -o \( "$@" \) -print
