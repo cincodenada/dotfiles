@@ -40,7 +40,17 @@ exit_code(){
 }
 
 itime() {
-  date -j -u -v+1H | awk -F'[ :]' '{printf "@%06.2f", ($6+$5*60+$4*3600)/86.4}'
+  date=""
+  if [ -n "$1" ]; then
+    if [[ *" "* == $1 ]]; then
+      date="-f '%F %T' $1"
+    elif [[ *":" == $1 ]]; then
+      date="-f '%T' $1"
+    else
+      date=$1
+    fi
+  fi
+  date -j -u -v+1H $date | awk -F'[ :]' '{printf "@%03.0f", ($6+$5*60+$4*3600)/86.4}'
 }
 
 # Check untracked files

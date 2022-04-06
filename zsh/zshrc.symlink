@@ -34,7 +34,11 @@ done
 
 # initialize autocomplete here, otherwise functions won't be loaded
 autoload -U compinit
-compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+	compinit
+else
+	compinit -C
+fi
 autoload -U bashcompinit
 bashcompinit
 
