@@ -1,108 +1,14 @@
-" Exisiting in the Windows VIM install
 set nocompatible
+set autochdir
 
 let mapleader=" "
 let maplocalleader=" "
 
-call plug#begin('~/.vim/plugged')
-
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-shell'
-
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-speeddating'
-
-Plug 'simnalamburt/vim-mundo'
-Plug 'ruanyl/coverage.vim'
-
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-"Plug 'ctrlpvim/ctrlp.vim'
-Plug 'jceb/vim-orgmode'
-Plug 'svermeulen/vim-macrobatics'
-
-Plug 'jremmen/vim-ripgrep'
-let g:rg_binary=system('which rg')
-
-""""""
-" IDE stuff
-""""""
-" Plug 'Valloric/YouCompleteMe'
-Plug 'vim-syntastic/syntastic'
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = [ 'coc-tsserver' ]
-
-Plug 'neoclide/coc-snippets'
-Plug 'honza/vim-snippets'
-" Use <C-l> for trigger snippet expand.
-imap <C-l> <Plug>(coc-snippets-expand)
-" Use <C-j> for select text for visual placeholder of snippet.
-vmap <C-j> <Plug>(coc-snippets-select)
-" Use <C-j> for jump to next placeholder, it's default of coc.nvim
-let g:coc_snippet_next = '<c-j>'
-" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-let g:coc_snippet_prev = '<c-k>'
-" Use <C-j> for both expand and jump (make expand higher priority.)
-imap <C-j> <Plug>(coc-snippets-expand-jump)
-" Use <Leader>x for convert visual selected code to snippet
-xmap <Leader>x  <Plug>(coc-convert-snippet)
-
-nnoremap <Leader>cc :CocCommand<CR>
-nnoremap <Leader>ir :CocCommand document.renameCurrentWord<CR>
-
-
-" Git stuff
-Plug 'airblade/vim-gitgutter'
-
-" Node stuff
-Plug 'eliba2/vim-node-inspect'
-Plug 'heavenshell/vim-jsdoc', { 
-  \ 'for': ['javascript', 'javascript.jsx','typescript'], 
-  \ 'do': 'make install'
-\}
-
-Plug 'idanarye/vim-vebugger'
-
-" Formatting suff
-Plug 'rhysd/vim-clang-format'
-let g:clang_format#command = 'clang-format-6.0'
-Plug 'w0rp/ale'
-Plug 'kamykn/spelunker.vim'
-
-""""
-" Other misc
-""""
-" Syntax
-Plug 'bfrg/vim-cpp-modern'
-Plug 'rust-lang/rust.vim'
-Plug 'rodjek/vim-puppet'
-Plug 'justinj/vim-pico8-syntax'
-Plug 'joukevandermaas/vim-ember-hbs'
-Plug 'jelera/vim-javascript-syntax'
-Plug 'GutenYe/json5.vim'
-Plug 'arzg/vim-sh'
-Plug 'Galicarnax/vim-regex-syntax'
-
-" Colors
-Plug 'vim-scripts/mayansmoke'
-Plug 'vim-scripts/candycode.vim'
-Plug 'rainux/vim-desert-warm-256'
-Plug 'altercation/vim-colors-solarized'
-
-" Header/cpp jump
-Plug 'nacitar/a.vim'
-
-" Url linking
-Plug 'vim-scripts/utl.vim'
-
-" Searching niceness
-Plug 'markonm/traces.vim'
-
-call plug#end()
+if !exists("g:plugs")
+  call plug#begin('~/.vim/plugged')
+  source ~/.dotfiles/vim/plug.vim
+  call plug#end()
+endif
 
 let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
 
@@ -114,18 +20,6 @@ au BufNewFile,BufRead .eslintrc setf json
 
 let javaScript_fold=1
 set foldmethod=syntax
-
-" FZF.vim stuff
-command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
-
-" YCM Stuff
-nnoremap <Leader>f :YcmCompleter FixIt<CR>
-augroup formatter
-  autocmd!
-  autocmd filetype javascript call SetJSFormat()
-  autocmd filetype cpp call SetClangFormat()
-augroup END
 
 " Remap spell commands to use spelunker
 nnoremap zl Zl
@@ -267,6 +161,8 @@ if &t_Co > 2 || has("gui_running")
   set hlsearch
 endif
 
+set guifont=Anonymous\ Pro:h14
+
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
 
@@ -342,10 +238,17 @@ function! KillMaps()
   silent! nunmap <buffer> <c-h>
 endfunction
 
-" FZF bindings
-inoremap <C-P> <ESC>:GFiles<CR>i 
-nnoremap <C-P> :GFiles<CR> 
-vnoremap <C-P> :GFiles<CR>
+" Search
+fu! SmartSearch()
+  if fugitive#head() != ''
+    Telescope git_files
+  else
+    Telescope find_files
+  endif
+endfunction
+inoremap <C-P> <ESC>:call SmartSearch()<CR>i 
+nnoremap <C-P> :call SmartSearch()<CR> 
+vnoremap <C-P> :call SmartSearch()<CR>
 
 " YCM rebindings
 nnoremap <Leader>p :YcmCompleter GoTo<CR>
@@ -481,3 +384,13 @@ cab _for % s/^\(\s\+\)_.forEach(\(.*\), (\?\([^,]\+\))\? => {\(\_.\{-\}\n\1\)})/
 cab _find % s/_.find(\(.*\), (\?\([^,]*\)))\? => { return \(\_.\{-\}\) })/\1.find(\2 => \3)/gc
 
 set grepprg=rg\ -n
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("nvim-0.5.0") || has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
+
