@@ -1,6 +1,6 @@
 autoload colors && colors
-# cheers, @ehrenmurdick
-# http://github.com/ehrenmurdick/config/blob/master/zsh/prompt.zsh
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git
 
 if (( $+commands[git] ))
 then
@@ -9,35 +9,19 @@ else
   git="/usr/bin/git"
 fi
 
-git_branch() {
-  echo $($git symbolic-ref HEAD 2>/dev/null | awk -F/ {'print $NF'})
-}
-
 git_dirty() {
-  branch_name=$(git_prompt_info)
+  branch_name=$(zstyle ':vcs_info:git*' formats "%b")
   if [[ "$branch_name" == "" ]]
   then
     echo ""
   else
-    st=$(git diff --shortstat 2> /dev/null | tail -n1)
-    #st=$($git status 2>/dev/null | grep -v "^$" | tail -n 1)
+    st=$(zstyle ':vcs_info:git*' formats "%u")
     if [[ "$st" == "" ]]
     then
-      echo "on %{$fg_bold[green]%}$branch_name%{$reset_color%}"
     else
       echo "on %{$fg_bold[red]%}$branch_name%{$reset_color%}"
     fi
   fi
-}
-
-git_prompt_info () {
- ref=$($git symbolic-ref HEAD 2>/dev/null) || return
-# echo "(%{\e[0;33m%}${ref#refs/heads/}%{\e[0m%})"
- echo "${ref#refs/heads/}"
-}
-
-unpushed () {
-  $git cherry -v @{upstream} 2>/dev/null
 }
 
 need_push () {
@@ -49,35 +33,97 @@ need_push () {
   fi
 }
 
-rb_prompt(){
-  if (( $+commands[rbenv] ))
-  then
-    version=$(rbenv version-name 2> /dev/null)
-    if [[ "$version" == "" ]] then version="-" fi
+DIRECTORY_NAME="%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 
-    echo "%{$fg_bold[yellow]%}$version%{$reset_color%}"
+exit_code(){
+  echo "%(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
+}
+
+itime() {
+  date=""
+  if [ -n "$1" ]; then
+    if [[ *" "* == $1 ]]; then
+      date="-f '%F %T' $1"
+    elif [[ *":" == $1 ]]; then
+      date="-f '%T' $1"
+    else
+      date=$1
+    fi
+  fi
+  date -j -u -v+1H $date | awk -F'[ :]' '{printf "@%03.0f", ($6+$5*60+$4*3600)/86.4}'
+}
+
+# Check untracked files
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
++vi-git-untracked(){
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+        git status --porcelain | grep -q '^?? ' 2> /dev/null ; then
+        # This will show the marker if there are any untracked files in repo.
+        # If instead you want to show the marker only if there are untracked
+        # files in $PWD, use:
+        #[[ -n $(git ls-files --others --exclude-standard) ]] ; then
+        hook_com[staged]+='T'
+    fi
+}
+
+# Check vs remote
+zstyle ':vcs_info:git*+set-message:*' hooks git-st
+function +vi-git-st() {
+    local ahead behind
+    local -a gitstatus
+
+    # Exit early in case the worktree is on a detached HEAD
+    git rev-parse ${hook_com[branch]}@{upstream} >/dev/null 2>&1 || return 0
+
+    local -a ahead_and_behind=(
+        $(git rev-list --left-right --count HEAD...${hook_com[branch]}@{upstream} 2>/dev/null)
+    )
+
+    ahead=${ahead_and_behind[1]}
+    behind=${ahead_and_behind[2]}
+
+    (( $ahead )) && gitstatus+=( "+${ahead}" )
+    (( $behind )) && gitstatus+=( "-${behind}" )
+
+    hook_com[misc]+=${(j:/:)gitstatus}
+}
+
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' unstagedstr 1
+zstyle ':vcs_info:git:*' stagedstr 1
+
+BRANCH_COLOR='%1(c.'$fg_bold[blue]'.%1(u.'$fg_bold[red]'.'$fg_bold[green]'))'
+# If there are staged and unstaged changes, add an asterisk so we can distinguish between that and only staged
+BRANCH_SUFFIX='%1(u.%1(c.*.).)'
+BASE_FORMAT="on %{$BRANCH_COLOR%}%b$BRANCH_SUFFIX%{$reset_color%} $fg_bold[yellow]%m$reset_color"
+zstyle ':vcs_info:git:*' actionformats "$BASE_FORMAT (%a)"
+zstyle ':vcs_info:git:*' formats "$BASE_FORMAT"
+export PROMPT=$'\n%{$fg_bold[blue]%}$(itime)%{$reset_color%} $DIRECTORY_NAME ${vcs_info_msg_0_}\n› '
+
+# Keep prompt noise out of set -x for other things
+get_x() {
+  if [ -z "$ZSH_PROMPT_DEBUG" ]; then
+    echo +x
   else
-    echo ""
+    echo -x
   fi
 }
 
-directory_name(){
-  echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
-}
-
-export PROMPT=$'\n$(rb_prompt) in $(directory_name) $(git_dirty)$(need_push)\n› '
-set_prompt () {
-  export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
-}
-
 precmd() {
+  set $(get_x)
+  vcs_info
   title "zsh" "%m" "%55<...<%~"
-  set_prompt
 }
 
 function zle-line-init zle-keymap-select {
+    NVM_VERSION=${${NVM_BIN#*node/}%/bin}
+    if [ -z NVM_VERSION ]; then
+      NVM_PROMPT=""
+    else
+      NVM_PROMPT="[npm $NVM_VERSION]"
+    fi
     VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]% %{$reset_color%}"
-    RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/} $EPS1"
+    RPS1="$NVM_PROMPT${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}$(exit_code)$EPS1"
     zle reset-prompt
 }
 zle -N zle-line-init

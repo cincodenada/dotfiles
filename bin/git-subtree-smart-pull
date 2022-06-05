@@ -1,0 +1,7 @@
+#!/bin/bash
+REPO=$1; shift
+REF=$1; shift
+# Friendly name, unused here cause --annotate doesn't do what I want after all
+LABEL=$(perl -p -e 's/\b-?(\w)/\U\1/g' <<< "$REPO")
+COMMIT=$(git rev-parse $REPO/$REF)
+git subtree pull --prefix=$REPO $REPO $REF -m "Merge $REF from $REPO" -m "commit-id: $COMMIT" $@

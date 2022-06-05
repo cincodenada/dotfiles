@@ -1,88 +1,16 @@
-" Exisiting in the Windows VIM install
 set nocompatible
-" Imported specific stuff from here instead...
-" source $VIMRUNTIME/vimrc_example.vim 
-" None of this Windows shit...
-"source $VIMRUNTIME/mswin.vim
-"behave mswin
-
-call plug#begin('~/.vim/plugged')
-
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-shell'
-
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-speeddating'
-
-Plug 'mbbill/undotree'
-
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-"Plug 'ctrlpvim/ctrlp.vim'
-Plug 'jceb/vim-orgmode'
-
-Plug 'jremmen/vim-ripgrep'
-let g:rg_binary=system('which rg')
-
-""""""
-" IDE stuff
-""""""
-" Plug 'Valloric/YouCompleteMe'
-Plug 'vim-syntastic/syntastic'
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = [ 'coc-tsserver' ]
-
-" Git stuff
-Plug 'airblade/vim-gitgutter'
-
-" Node stuff
-Plug 'ruanyl/coverage.vim'
-Plug 'eliba2/vim-node-inspect'
-Plug 'heavenshell/vim-jsdoc', { 
-  \ 'for': ['javascript', 'javascript.jsx','typescript'], 
-  \ 'do': 'make install'
-\}
-
-Plug 'idanarye/vim-vebugger'
-
-" Formatting suff
-Plug 'rhysd/vim-clang-format'
-let g:clang_format#command = 'clang-format-6.0'
-Plug 'w0rp/ale'
-
-""""
-" Other misc
-""""
-" Syntax
-Plug 'bfrg/vim-cpp-modern'
-Plug 'rust-lang/rust.vim'
-Plug 'rodjek/vim-puppet'
-Plug 'justinj/vim-pico8-syntax'
-Plug 'joukevandermaas/vim-ember-hbs'
-Plug 'jelera/vim-javascript-syntax'
-
-" Colors
-Plug 'vim-scripts/mayansmoke'
-Plug 'vim-scripts/candycode.vim'
-Plug 'rainux/vim-desert-warm-256'
-Plug 'altercation/vim-colors-solarized'
-
-" Header/cpp jump
-Plug 'nacitar/a.vim'
-
-" Url linking
-Plug 'vim-scripts/utl.vim'
-
-let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
-
-call plug#end()
+set autochdir
 
 let mapleader=" "
 let maplocalleader=" "
+
+if !exists("g:plugs")
+  call plug#begin('~/.vim/plugged')
+  source ~/.dotfiles/vim/plug.vim
+  call plug#end()
+endif
+
+let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
 
 " --------------------------------
 " File Formats
@@ -93,21 +21,28 @@ au BufNewFile,BufRead .eslintrc setf json
 let javaScript_fold=1
 set foldmethod=syntax
 
-" FZF.vim stuff
-command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
-
-" YCM Stuff
-nnoremap <Leader>f :YcmCompleter FixIt<CR>
-augroup formatter
-  autocmd!
-  autocmd filetype javascript call SetJSFormat()
-  autocmd filetype cpp call SetClangFormat()
-augroup END
+" Remap spell commands to use spelunker
+nnoremap zl Zl
+nnoremap zL ZL
+nnoremap zc Zc
+nnoremap zC ZC
+nnoremap zf Zf
+nnoremap zF ZF
+"" I don't know why these are necessary per docs but hey
+nmap zg Zg
+nmap zG ZG
+nmap zw Zw
+nmap zW ZW
+nmap zug Zug
+nmap zuw Zuw
+nmap zuG ZUG
+nmap zuW ZUW
 
 function! SetJSFormat()
   nnoremap <Leader>ln :ALENext<CR>
   nnoremap <Leader>lp :ALEPrev<CR>
+  nnoremap <Leader>lr :call QuickFixNpxCommand('eslint . -f unix', v:false)<CR>
+  nnoremap <Leader>la :call QuickFixNpxCommand('eslint . -f unix', v:true)<CR>
   nnoremap <Leader>q :ALEFix eslint<CR>
   nnoremap <C-f> :ALEFix eslint<CR>
   vnoremap <C-f> :ALEFix eslint<CR>
@@ -119,13 +54,25 @@ function! SetClangFormat()
 endfunction
 
 " Node debugger keys
-nnoremap <Leader>ds :NodeInspectStart<cr>
-nnoremap <Leader>dr :NodeInspectRun<cr>
 nnoremap <Leader>dc :NodeInspectConnect("127.0.0.1:9229")<cr>
+nnoremap <Leader>dt :NodeInspectStart("test")<cr>
+nnoremap <Leader>ds :NodeInspectStart("run")<cr>
+nnoremap <Leader>dr :NodeInspectRun<cr>
 nnoremap <Leader>di :NodeInspectStepInto<cr>
+nnoremap <Leader>do :NodeInspectStepOut<cr>
 nnoremap <Leader>dn :NodeInspectStepOver<cr>
 nnoremap <Leader>db :NodeInspectToggleBreakpoint<cr>
+nnoremap <Leader>dw :NodeInspectAddWatch<cr>
 nnoremap <Leader>dq :NodeInspectStop<cr>
+
+nnoremap <silent><F4> :NodeInspectStart<cr>
+nnoremap <silent><F5> :NodeInspectRun<cr>
+nnoremap <silent><F6> :NodeInspectConnect("127.0.0.1:9229")<cr>
+nnoremap <silent><F7> :NodeInspectStepInto<cr>
+nnoremap <silent><F8> :NodeInspectStepOver<cr>
+nnoremap <silent><F9> :NodeInspectToggleBreakpoint<cr>
+nnoremap <silent><F10> :NodeInspectStop<cr>
+
 " Quick stepping
 nnoremap <C-S-n> :NodeInspectStepInto<cr>
 nnoremap <C-n> :NodeInspectStepOver<cr>
@@ -133,19 +80,53 @@ nnoremap <C-n> :NodeInspectStepOver<cr>
 " Add Node to path for tsserver
 let $PATH.=':/Users/joel/.nvm/versions/node/v12.22.1/bin'
 
-function! QuickFixNpmCommand(cmd)
-  let l:cwd = getcwd()
-  let l:path = l:cwd
+function! s:FindFile(file, fromDir, top_level)
+  let l:path = a:fromDir
+  let l:foundPath = v:false
   while l:path != '/'
-    if filereadable(l:path . '/package.json')
-      let l:cmdline = 'npm --prefix ' . l:path . ' run ' . a:cmd
-      echo 'Running ' . l:cmdline
-      cexpr system(l:cmdline)
-      return
+    if filereadable(l:path . '/' . a:file)
+      let l:foundPath = l:path
+      if !a:top_level
+        break
+      endif
     endif
     let l:path = fnamemodify(l:path, ":h")
   endwhile
-  echo "Couldn't find package.json staring from " . l:cwd
+  return l:foundPath
+endfunction
+
+function! s:GetNodeRootCommand(cmd, top_level)
+  let l:cwd = getcwd()
+  let l:path = s:FindFile('package.json', l:cwd, a:top_level)
+  if empty(l:path)
+    echo "Couldn't find package.json staring from " . l:cwd
+  else
+    return 'cd ' . l:path . '; ' . a:cmd
+  endif
+endfunction
+
+function! NpmInspectConnect(cmd)
+  let l:cmd = s:GetNodeRootCommand('NODE_OPTIONS="--inspect=localhost:9229" npm ' . a:cmd, v:false)
+  let l:cmdline = printf('(%s) &', l:cmd)
+  echom "Running " . l:cmdline
+  let result = system(l:cmdline)
+  call nodeinspect#NodeInspectConnect("127.0.0.1:9229")
+endfunction
+
+function! QuickFixNpxCommand(cmd, top_level)
+  let l:cmd = s:GetNodeRootCommand('npx ' . a:cmd, a:top_level)
+  if l:cmd
+    echo 'Running ' . l:cmdline
+    cexpr system(l:cmdline)
+  endif
+endfunction
+
+function! QuickFixNpmCommand(cmd, top_level)
+  let l:cmd = s:GetNodeRootCommand('npm run --silent ' . a:cmd, a:top_level)
+  if l:cmd
+    echo 'Running ' . l:cmd
+    cexpr system(l:cmd)
+  endif
 endfunction
 
 " --------------------------------
@@ -179,6 +160,8 @@ if &t_Co > 2 || has("gui_running")
   syntax on
   set hlsearch
 endif
+
+set guifont=Anonymous\ Pro:h14
 
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
@@ -255,10 +238,17 @@ function! KillMaps()
   silent! nunmap <buffer> <c-h>
 endfunction
 
-" FZF bindings
-inoremap <C-P> <ESC>:GFiles<CR>i 
-nnoremap <C-P> :GFiles<CR> 
-vnoremap <C-P> :GFiles<CR>
+" Search
+fu! SmartSearch()
+  if fugitive#head() != ''
+    Telescope git_files
+  else
+    Telescope find_files
+  endif
+endfunction
+inoremap <C-P> <ESC>:call SmartSearch()<CR>i 
+nnoremap <C-P> :call SmartSearch()<CR> 
+vnoremap <C-P> :call SmartSearch()<CR>
 
 " YCM rebindings
 nnoremap <Leader>p :YcmCompleter GoTo<CR>
@@ -368,7 +358,7 @@ if has('cscope')
 endif
 
 set t_Co=256
-colorscheme candycode
+colorscheme desert-warm-256
 
 " Syntax debugging
 " Show the stack of syntax hilighting classes affecting whatever is under the
@@ -388,4 +378,19 @@ endfunction
 nnoremap <F6> :call <sid>SynStack()<CR>
 nnoremap <F7> :call <sid>HiGroup()<CR>"
 
+" Abbreviations
+" Replace lodash foreach
+cab _for % s/^\(\s\+\)_.forEach(\(.*\), (\?\([^,]\+\))\? => {\(\_.\{-\}\n\1\)})/\1for (const \3 of \2) {\4}/gc  		
+cab _find % s/_.find(\(.*\), (\?\([^,]*\)))\? => { return \(\_.\{-\}\) })/\1.find(\2 => \3)/gc
+
 set grepprg=rg\ -n
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("nvim-0.5.0") || has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
+

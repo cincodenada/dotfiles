@@ -1,0 +1,7 @@
+if [ -z "$1" ]; then
+  echo "Must provide new time"
+  exit 1
+fi
+TIME=$1; shift
+TIME=$(date -d"$TIME" -Is)
+GIT_COMMITTER_DATE=$TIME GIT_AUTHOR_DATE=$GIT_COMMITTER_DATE git commit "$@"

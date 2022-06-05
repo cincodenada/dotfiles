@@ -1,0 +1,8 @@
+#!/bin/bash
+REPO=$1
+if [ -z $2 ]; then
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+else
+    BRANCH=$2
+fi
+git subtree push --prefix=$REPO $REPO $BRANCH
