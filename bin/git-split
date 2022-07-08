@@ -49,13 +49,20 @@ help() {
   echo "Usage:
 git split start
 
-git add -p # or similar, stage partial changes
-git split commit
-
+# Stage partial changes with git add -p or similar
 git add -p
-git split commit
+git split --continue
 
-git split finish"
+# Do as many partial changes as you like
+git add -p
+git split --continue
+
+# Commit all remaining changes with --finish
+git split --finish
+
+Other commands:
+git split --abort to discard changes
+git split -h for this help"
 }
 
 
@@ -63,6 +70,6 @@ case ${1##*-} in
   start|"") start ;;
   commit|continue) commit ;;
   finish) finish ;;
-  reset) reset ;;
+  reset|abort) reset ;;
   *) help ;;
 esac
