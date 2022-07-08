@@ -1,0 +1,67 @@
+#!/bin/bash -e
+
+GITDIR=$(git rev-parse --git-dir)
+ORIG_COMMIT_FILE="$GITDIR/SPLIT_HEAD"
+EMPTY_COMMIT_FILE="$GITDIR/SPLIT_TEMPLATE"
+
+err() {
+  echo $1
+  exit 1
+}
+
+start() {
+  ORIG_COMMIT=$(git rev-parse HEAD)
+  echo $ORIG_COMMIT > $GITDIR/SPLIT_HEAD
+
+  git revert -n HEAD
+  git commit --amend --allow-empty --no-edit
+  git rev-parse HEAD > $EMPTY_COMMIT_FILE
+
+  git cherry-pick -n $ORIG_COMMIT
+  git reset HEAD
+  echo "Empty commit added, stage changes and run 'git split commit' to add a commit, and 'git split finish' to commit the final changeset"
+}
+
+commit() {
+  EMPTY_COMMIT=$(cat $EMPTY_COMMIT_FILE) || err "Not currently splitting!"
+  git commit --amend "$@"
+  if [ -z $(git diff $ORIG_COMMIT) ]; then
+    cleanup
+    echo "Split finished"
+  else
+    git cherry-pick --keep-redundant-commits --no-edit $EMPTY_COMMIT
+    echo "Split committed, run 'git split --continue' to add another"
+  fi
+}
+
+reset() {
+  ORIG_COMMIT=$(cat $ORIG_COMMIT_FILE) || err "Not currently splitting!"
+  git reset --hard $ORIG_COMMIT
+  cleanup
+}
+
+cleanup() {
+  rm $ORIG_COMMIT_FILE $EMPTY_COMMIT_FILE
+}
+
+help() {
+  echo "Usage:
+git split start
+
+git add -p # or similar, stage partial changes
+git split commit
+
+git add -p
+git split commit
+
+git split finish"
+}
+
+
+case ${1##*-} in
+  start|"") start ;;
+  commit|continue) commit ;;
+  finish) finish ;;
+  reset) reset ;;
+  *) help ;;
+esac
