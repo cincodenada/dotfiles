@@ -2,7 +2,6 @@
 
 GITDIR=$(git rev-parse --git-dir)
 ORIG_COMMIT_FILE="$GITDIR/SPLIT_HEAD"
-EMPTY_COMMIT_FILE="$GITDIR/SPLIT_TEMPLATE"
 
 err() {
   echo $1
@@ -13,25 +12,27 @@ start() {
   ORIG_COMMIT=$(git rev-parse HEAD)
   echo $ORIG_COMMIT > $GITDIR/SPLIT_HEAD
 
-  git revert -n HEAD
-  git commit --amend --allow-empty --no-edit
-  git rev-parse HEAD > $EMPTY_COMMIT_FILE
-
-  git cherry-pick -n $ORIG_COMMIT
-  git reset HEAD
-  echo "Empty commit added, stage changes and run 'git split commit' to add a commit, and 'git split finish' to commit the final changeset"
+  git reset -N HEAD^
+  echo "Commit rolled back, stage changes and run 'git split --continue' to add a split commit, and 'git split --finish' to commit all remaining changes"
 }
 
 commit() {
-  EMPTY_COMMIT=$(cat $EMPTY_COMMIT_FILE) || err "Not currently splitting!"
-  git commit --amend "$@"
-  if [ -z $(git diff $ORIG_COMMIT) ]; then
+  ORIG_COMMIT=$(cat $ORIG_COMMIT_FILE) || err "Not currently splitting!"
+  git commit -c $ORIG_COMMIT "$@"
+  if [ -z "$(git diff HEAD $ORIG_COMMIT)" ]; then
     cleanup
     echo "Split finished"
   else
-    git cherry-pick --keep-redundant-commits --no-edit $EMPTY_COMMIT
     echo "Split committed, run 'git split --continue' to add another"
   fi
+}
+
+finish() {
+  ORIG_COMMIT=$(cat $ORIG_COMMIT_FILE) || err "Not currently splitting!"
+  git add -u
+  git commit -c $ORIG_COMMIT "$@"
+  cleanup
+  echo "Split finished"
 }
 
 reset() {
@@ -41,7 +42,7 @@ reset() {
 }
 
 cleanup() {
-  rm $ORIG_COMMIT_FILE $EMPTY_COMMIT_FILE
+  rm $ORIG_COMMIT_FILE
 }
 
 help() {
