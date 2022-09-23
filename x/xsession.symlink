@@ -9,5 +9,3 @@ xmodmap ~/.Xmodmap
 
 # Set wallpaper
 feh --bg-fill --randomize ~/Pictures/apod/*
-
-$HOME/bin/xmonad
