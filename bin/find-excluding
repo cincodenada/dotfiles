@@ -4,7 +4,7 @@ IFS=',' read -ra excludes <<< $1
 shift
 
 search=""
-while [[ $1 != "-"* ]]; do
+while [[ -n "$1" && $1 == "-"* ]]; do
   search="$search $1"
   shift
 done
@@ -18,4 +18,4 @@ for x in $excludes; do
   exclude="$exclude -name $x -prune"
 done
 
-find $search $exclude -o \( "$@" \) -print
+find $search $exclude -o \( -name "$@" \) -print
