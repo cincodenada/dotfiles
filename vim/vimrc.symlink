@@ -456,26 +456,5 @@ inoremap <silent><expr> <TAB>
 " <S-TAB>: completion back.
 inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
 
-fu! SaveSession()
-  let l:path = $HOME .. "/.local/share/nvim"
-  call mkdir(l:path, "p")
-  mksession! l:path .. "/session.vim"
-endfunction
-
-fu! RestoreSession()
-  let l:sessfile = $HOME .. "/.local/share/nvim/session.vim"
-  if filereadable(l:sessfile)
-    source l:sessfile
-		delete(l:sessfile)
-  end
-endfunction
-
-fu! Restart()
-  call SaveSession()
-  qa
-endfunction
-
-autocmd VimEnter * call RestoreSession()
-
 " Use ddc.
 call ddc#enable()
