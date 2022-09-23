@@ -1,6 +1,5 @@
 # Compiled source #
 ###################
-*.com
 *.class
 *.dll
 *.exe
@@ -52,6 +51,10 @@ Thumbs.db
 #################
 .idea
 jsconfig.json
+
+# Package Manager Stuff #
+#########################
+node_modules
 
 # My scratch dir #
 ##################
