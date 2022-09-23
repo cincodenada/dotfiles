@@ -23,3 +23,6 @@ include "%L"
 
 <Multi_key> <t> <caret> : "†"
 <Multi_key> <t> <t> <caret> : "‡"
+
+# IPA Stuff
+<Multi_key> <colon> <comma> : "ː"
