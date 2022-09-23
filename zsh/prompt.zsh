@@ -9,6 +9,10 @@ else
   git="/usr/bin/git"
 fi
 
+if [[ $OSTYPE = "darwin"* ]]; then
+  IS_MACOS="yep"
+fi
+
 git_dirty() {
   branch_name=$(zstyle ':vcs_info:git*' formats "%b")
   if [[ "$branch_name" == "" ]]
@@ -38,16 +42,21 @@ DIRECTORY_NAME="%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 
 itime() {
   date=""
-  if [ -n "$1" ]; then
-    if [[ *" "* == $1 ]]; then
-      date="-f '%F %T' $1"
-    elif [[ *":" == $1 ]]; then
-      date="-f '%T' $1"
-    else
-      date=$1
+  if [[ -n $IS_MACOS ]]; then
+    if [ -n "$1" ]; then
+      if [[ *" "* == $1 ]]; then
+        date="-f '%F %T' $1"
+      elif [[ *":" == $1 ]]; then
+        date="-f '%T' $1"
+      else
+        date=$1
+      fi
     fi
+    DATEARGS=(-j -v+1H $date)
+  else
+    DATEARGS=(-d "+1 hour")
   fi
-  date -j -u -v+1H $date | awk -F'[ :]' '{printf "@%03.0f", ($6+$5*60+$4*3600)/86.4}'
+  date -u $DATEARGS | awk -F'[ :]' '{printf "@%03.0f", ($6+$5*60+$4*3600)/86.4}'
 }
 
 shlvl() {
