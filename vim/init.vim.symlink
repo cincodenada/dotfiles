@@ -14,17 +14,53 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'jose-elias-alvarez/typescript.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'MunifTanjim/prettier.nvim'
 
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-symbols.nvim'
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+"Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'cljoly/telescope-repo.nvim'
+
+Plug 'ellisonleao/glow.nvim', {'branch': 'main'}
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 Plug 'folke/trouble.nvim'
+
+Plug 'Shougo/ddc-nvim-lsp'
+
+Plug 'klen/nvim-test'
 call plug#end()
 
 source ~/.vimrc
 
+call ddc#custom#patch_global('sources', ['nvim-lsp'])
+call ddc#custom#patch_global('sourceOptions', {
+      \ '_': { 'matchers': ['matcher_head'] },
+      \ 'nvim-lsp': {
+      \   'mark': 'lsp',
+      \   'forceCompletionPattern': '\.\w*|:\w*|->\w*|\S\/\S*' },
+      \ })
+
+command CloseFloating lua for _, win in ipairs(vim.api.nvim_list_wins()) do local config = vim.api.nvim_win_get_config(win); if config.relative ~= "" then vim.api.nvim_win_close(win, false); print('Closing window', win) end end<cr>
+
 lua << EOF
+
+-- Custom keys
+--vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
+--vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
+--vim.keymap.set('n', '<Leader>ep', vim.diagnostic.goto_prev)
+
+vim.keymap.set('n', '<Leader>es', vim.diagnostic.show)
+vim.keymap.set('n', '<Leader>eh', vim.diagnostic.hide)
+vim.keymap.set('n', '<Leader>en', function() vim.diagnostic.goto_next({severity=vim.diagnostic.severity.ERROR}) end )
+vim.keymap.set('n', '<Leader>ep', function() vim.diagnostic.goto_prev({severity=vim.diagnostic.severity.ERROR}) end )
+vim.keymap.set('n', '<Leader>ew', "<cmd>Trouble<cr>")
+vim.keymap.set('n', '<Leader>ei', vim.diagnostic.open_float)
+vim.keymap.set('n', '<Leader>i', vim.lsp.buf.hover)
+-- TODO: When nvim 8.0 comes out replace this with format()
+vim.keymap.set('n', '<Leader>q', function() vim.lsp.buf.formatting_seq_sync({}, 5000) end )
+
 
 -- Load custom tree-sitter grammar for org filetype
 require('orgmode').setup_ts_grammar()
@@ -43,13 +79,34 @@ require'nvim-treesitter.configs'.setup {
 require('orgmode').setup({
   org_agenda_files = {'~/Sync/org/*'},
   org_default_notes_file = '~/Sync/org/refile.org',
+	mappings = {
+		org = {
+			org_toggle_checkbox = '<Leader>cc',
+		}
+	},
+  org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
   org_agenda_templates = {
     t = { description = 'Task', template = "* TODO %?\n  %u" },
     f = { description = 'File Task', template = "* TODO %?\n  %u\n  %a" },
   },
 })
 
-local setup_lsp = function(client)
+local util = require 'lspconfig.util'
+
+--local fallback_jump = function()
+--	local oldlevel = vim.lsp.log.get_level()
+--	vim.lsp.log.set_level(10)
+--	if not vim.lsp.buf.definition() then
+--		vim.cmd("tag <cword>")
+--  end
+--end
+
+local setup_lsp = function(client, use_formatter)
+	if not use_formatter then
+		client.resolved_capabilities.document_formatting = false
+		client.resolved_capabilities.document_range_formatting = false
+	end
+
 	-- See `:help nvim_buf_set_keymap()` for more information
 	vim.api.nvim_buf_set_keymap(0, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
 	vim.api.nvim_buf_set_keymap(0, 'n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
@@ -61,44 +118,90 @@ local setup_lsp = function(client)
 
 	-- Use LSP as the handler for formatexpr.
 	--    See `:help formatexpr` for more information.
-	vim.api.nvim_buf_set_option(0, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
+	vim.api.nvim_buf_set_option(0, 'formatexpr', 'v:lua.vim.lsp.formatexpr')
 
 	-- For plugins with an `on_attach` callback, call them here. For example:
 	-- require('completion').on_attach()
+end
+
+local setup_ts = function(client)
+  setup_lsp(client)
 
   local ts_utils = require("nvim-lsp-ts-utils")
   ts_utils.setup({
     filter_out_diagnostics_by_code = {
-      7044,  -- Parameter type inference
-			80001, -- CommonJS module
+      7044, -- Parameter type inference
+      7047, -- Same?
+      80001, -- CommonJS module
+      6133, -- delared-not-used, duplicative of linting and incorrect for React
+      -- Not enough info:
+      2339, -- property does not exist
+      2349, -- expression is not callable
+      2306, -- not a module 
     }
   })
   ts_utils.setup_client(client)
-
-	local source_abbrev = {
-		typescript = "TS"
-	}
-
-  vim.diagnostic.config{
-    virtual_text = {
-      format = function(diagnostic)
-        return string.format(
-          "%s%s: %s",
-          source_abbrev[diagnostic.source], diagnostic.code, diagnostic.message
-        )
-      end
-    }
-  }
 end
 
+local source_abbrev = {
+  typescript = "TS",
+  eslint = "ESL",
+  eslint_d = "ESL",
+  stylelintplus = "STYL",
+}
+
+vim.diagnostic.config{
+  virtual_text = {
+    format = function(diagnostic)
+      code = source_abbrev[diagnostic.source] or diagnostic.source
+      if diagnostic.code then
+        code = code.."."..diagnostic.code
+      end
+      return string.format(
+        "%s: %s", code, diagnostic.message
+      )
+    end
+  }
+}
+
 require('lspconfig').tsserver.setup{
-  on_attach = setup_lsp
+  init_options = require("nvim-lsp-ts-utils").init_options,
+  on_attach = setup_ts
+}
+
+local runtime_path = vim.split(package.path, ';')
+table.insert(runtime_path, "lua/?.lua")
+table.insert(runtime_path, "lua/?/init.lua")
+
+require'lspconfig'.sumneko_lua.setup {
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+        -- Setup your lua path
+        path = runtime_path,
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
 }
 
 require('trouble').setup{
   icons = false,
-  fold_open = "▶",
-  fold_closed = "▼",
+  fold_open = "▼",
+  fold_closed = "▶",
   indent_lines = false,
   signs = {
     error = "⛔️",
@@ -109,15 +212,153 @@ require('trouble').setup{
 }
 
 require("null-ls").setup({
-    sources = {
-        --require("null-ls").builtins.diagnostics.eslint,
-        require("null-ls").builtins.diagnostics.eslint_d,
-        require("null-ls").builtins.completion.spell,
-        require("null-ls").builtins.formatting.prettier
-    },
+	on_attach = function(client) setup_lsp(client, true) end,
+	sources = {
+		--require("null-ls").builtins.diagnostics.eslint,
+		--require("null-ls").builtins.code_actions.eslint_d,
+		require("null-ls").builtins.diagnostics.eslint_d,
+		require("null-ls").builtins.formatting.eslint_d,
+		require("null-ls").builtins.completion.spell,
+		--require("null-ls").builtins.formatting.prettier,
+	},
+	root_dir = util.root_pattern("package.json", ".git")
 })
 
-require('telescope').load_extension('fzf')
+require'lspconfig'.stylelint_lsp.setup{
+  cmd = { "/Users/joel/.nvm/versions/node/v16.14.2/bin/stylelint-lsp", "--stdio" },
+  settings = {
+    stylelintplus = {}
+  }
+}
+
+require('prettier').setup({
+  bin = 'prettier', -- or `prettierd`
+  filetypes = {
+    "css",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "less",
+    "markdown",
+    "scss",
+    "typescript",
+    "typescriptreact",
+    "yaml",
+  },
+	root_dir = util.root_pattern("package.json", ".git")
+})
+
+require'telescope'.setup{
+  defaults = {
+    path_display={"smart"}
+  }
+}
+require('telescope').load_extension('fzy_native')
+require'telescope'.load_extension'repo'
+
+require('nvim-test').setup({
+  runners = {
+		javascript = "nvim-test.runners.mocha",
+	}
+})
+
+--[[
+Most pure lua print table functions I've seen have a problem with deep recursion and tend to cause a stack overflow when 
+going too deep. This print table function that I've written does not have this problem. It should also be capable of handling 
+really large tables due to the way it handles concatenation. In my personal usage of this function, it outputted 63k lines to 
+file in about a second.
+ 
+The output also keeps lua syntax and the script can easily be modified for simple persistent storage by writing the output to 
+file if modified to allow only number, boolean, string and table data types to be formatted.
+ 
+author: Alundaio (aka Revolucas)
+--]]
+ 
+function print_table(node)
+    -- to make output beautiful
+    local function tab(amt)
+        local str = ""
+        for i=1,amt do
+            str = str .. "\t"
+        end
+        return str
+    end
+ 
+    local cache, stack, output = {},{},{}
+    local depth = 1
+    local output_str = "{\n"
+ 
+    while true do
+        local size = 0
+        for k,v in pairs(node) do
+            size = size + 1
+        end
+ 
+        local cur_index = 1
+        for k,v in pairs(node) do
+            if (cache[node] == nil) or (cur_index >= cache[node]) then
+               
+                if (string.find(output_str,"}",output_str:len())) then
+                    output_str = output_str .. ",\n"
+                elseif not (string.find(output_str,"\n",output_str:len())) then
+                    output_str = output_str .. "\n"
+                end
+ 
+                -- This is necessary for working with HUGE tables otherwise we run out of memory using concat on huge strings
+                table.insert(output,output_str)
+                output_str = ""
+               
+                local key
+                if (type(k) == "number" or type(k) == "boolean") then
+                    key = "["..tostring(k).."]"
+                else
+                    key = "['"..tostring(k).."']"
+                end
+ 
+                if (type(v) == "number" or type(v) == "boolean") then
+                    output_str = output_str .. tab(depth) .. key .. " = "..tostring(v)
+                elseif (type(v) == "table") then
+                    output_str = output_str .. tab(depth) .. key .. " = {\n"
+                    table.insert(stack,node)
+                    table.insert(stack,v)
+                    cache[node] = cur_index+1
+                    break
+                else
+                    output_str = output_str .. tab(depth) .. key .. " = '"..tostring(v).."'"
+                end
+ 
+                if (cur_index == size) then
+                    output_str = output_str .. "\n" .. tab(depth-1) .. "}"
+                else
+                    output_str = output_str .. ","
+                end
+            else
+                -- close the table
+                if (cur_index == size) then
+                    output_str = output_str .. "\n" .. tab(depth-1) .. "}"
+                end
+            end
+ 
+            cur_index = cur_index + 1
+        end
+ 
+        if (#stack > 0) then
+            node = stack[#stack]
+            stack[#stack] = nil
+            depth = cache[node] == nil and depth + 1 or depth - 1
+        else
+            break
+        end
+    end
+ 
+    -- This is necessary for working with HUGE tables otherwise we run out of memory using concat on huge strings
+    table.insert(output,output_str)
+    output_str = table.concat(output)
+   
+    print(output_str)
+end
 
 EOF
 
@@ -125,15 +366,26 @@ augroup lsp
 	autocmd!
 	autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float({ focusable=false })
 augroup END
-nmap <Leader>oo :FZF ~/Sync/org<CR>
+nmap <Leader>oo <cmd>Telescope find_files cwd=~/Sync/org<CR>
+
+" References
+nnoremap gr <cmd>lua vim.lsp.buf.references()<cr>
 
 " Find files using Telescope command-line sugar.
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fr <cmd>Telescope git_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-nnoremap <leader>fG <cmd>Telescope grep_string<cr>
+nnoremap <leader>fr <cmd>Telescope repo<cr>
+nnoremap <leader>fgw <cmd>Telescope grep_string<cr>
+nnoremap <leader>fgg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fgr <cmd>Telescope git_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>f? <cmd>Telescope help_tags<cr>
-nnoremap <leader>fe <cmd>Telescope symbols<cr>
 nnoremap <leader>fhc <cmd>Telescope command_history<cr>
-nnoremap <leader>fhs <cmd>Telescope command_history<cr>
+nnoremap <leader>fhs <cmd>Telescope search_history<cr>
+
+nnoremap <leader>fcs <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
+
+" Emojiiiii
+nnoremap <leader>fe <cmd>Telescope symbols<cr>
+
+nnoremap <leader>wf <cmd>Telescope lsp_code_actions<cr>
+nnoremap <leader>wg <cmd>Telescope grep_string<cr>

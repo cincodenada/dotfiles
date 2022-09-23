@@ -10,7 +10,8 @@ if !exists("g:plugs")
   call plug#end()
 endif
 
-let g:org_todo_keywords=['TODO', 'DOING', 'DONE']
+" Syntax settings
+let g:markdown_fenced_languages = ['html', 'js=javascript', 'bash=sh']
 
 " --------------------------------
 " File Formats
@@ -20,14 +21,16 @@ au BufNewFile,BufRead .eslintrc setf json
 
 let javaScript_fold=1
 set foldmethod=syntax
+" No folding by default
+set nofoldenable
 
 " Remap spell commands to use spelunker
-nnoremap zl Zl
-nnoremap zL ZL
-nnoremap zc Zc
-nnoremap zC ZC
-nnoremap zf Zf
-nnoremap zF ZF
+"nnoremap zl Zl
+"nnoremap zL ZL
+"nnoremap zc Zc
+"nnoremap zC ZC
+"nnoremap zf Zf
+"nnoremap zF ZF
 "" I don't know why these are necessary per docs but hey
 nmap zg Zg
 nmap zG ZG
@@ -64,6 +67,7 @@ nnoremap <Leader>dn :NodeInspectStepOver<cr>
 nnoremap <Leader>db :NodeInspectToggleBreakpoint<cr>
 nnoremap <Leader>dw :NodeInspectAddWatch<cr>
 nnoremap <Leader>dq :NodeInspectStop<cr>
+nnoremap <Leader>d? :nmap <lt>Leader>d<cr>
 
 nnoremap <silent><F4> :NodeInspectStart<cr>
 nnoremap <silent><F5> :NodeInspectRun<cr>
@@ -78,7 +82,8 @@ nnoremap <C-S-n> :NodeInspectStepInto<cr>
 nnoremap <C-n> :NodeInspectStepOver<cr>
 
 " Add Node to path for tsserver
-let $PATH.=':/Users/joel/.nvm/versions/node/v12.22.1/bin'
+"let $NVM_NODE_VERSION='12'
+let $PATH=$HOME . '/.nvm/versions/node/v14.19.0/bin:' . $PATH
 
 function! s:FindFile(file, fromDir, top_level)
   let l:path = a:fromDir
@@ -224,8 +229,9 @@ set nobackup
 set nowritebackup
 set undofile
 
-let g:netrw_list_hide='\(^\|\s\s\)\zs\.[^\.]\S\+'
-let g:netrw_menu=0
+" This was my fault all along!!!! FUCK!
+"let g:netrw_list_hide='\(^\|\s\s\)\zs\.[^\.]\S\+'
+"let g:netrw_menu=0
 " Disable the fucking destructive one-key bindings goddamit
 augroup netrw_maps
   autocmd!
@@ -240,15 +246,23 @@ endfunction
 
 " Search
 fu! SmartSearch()
-  if fugitive#head() != ''
+  if FugitiveGitDir() != ''
     Telescope git_files
   else
-    Telescope find_files
+    Telescope repo
   endif
 endfunction
-inoremap <C-P> <ESC>:call SmartSearch()<CR>i 
-nnoremap <C-P> :call SmartSearch()<CR> 
+inoremap <C-P> <ESC>:call SmartSearch()<CR>i
+nnoremap <C-P> :call SmartSearch()<CR>
 vnoremap <C-P> :call SmartSearch()<CR>
+
+inoremap <C-;> <ESC><cmd>Telescope find_files<CR>i
+nnoremap <C-;> <cmd>Telescope find_files<CR>
+vnoremap <C-;> <cmd>Telescope find_files<CR>
+
+inoremap <C-H> <ESC><cmd>Telescope oldfiles<CR>i
+nnoremap <C-H> <cmd>Telescope oldfiles<CR>
+vnoremap <C-H> <cmd>Telescope oldfiles<CR>
 
 " YCM rebindings
 nnoremap <Leader>p :YcmCompleter GoTo<CR>
@@ -275,19 +289,19 @@ fu! Rebase()
 		nnoremap <buffer> <silent> f :Fixup<CR>
 		nnoremap <buffer> <silent> x :Exec<CR>
         let b:in_rebase = 1
-    else 
+    else
         nunmap p
         nunmap r
         nunmap e
         nunmap s
-        nunmap f:help 
+        nunmap f:help
         nunmap x
         let b:in_rebase = 0
     endif
 endfunction
 endif
 
-" From http://vim.wikia.com/wiki/Improved_hex_editing 
+" From http://vim.wikia.com/wiki/Improved_hex_editing
 "nnoremap <C-H> :Hexmode<CR>
 "inoremap <C-H> <Esc>:Hexmode<CR>
 "vnoremap <C-H> :<C-U>Hexmode<CR>
@@ -311,7 +325,7 @@ function! ToggleHex()
 		let b:oldbin=&bin
 		" set new options
 		setlocal binary " make sure it overrides any textwidth, etc.
-		silent :e " this will reload the file without trickeries 
+		silent :e " this will reload the file without trickeries
 							"(DOS line endings will be shown entirely )
 		let &ft="xxd"
 		" set status
@@ -394,3 +408,74 @@ else
   set signcolumn=yes
 endif
 
+augroup netrw_maps
+  autocmd!
+  autocmd BufWritePost ~/.vimrc,~/.vim/**/*.vim,~/.config/nvim/*.vim source %
+augroup END
+
+
+" ddc settings
+" Use around source.
+" https://github.com/Shougo/ddc-around
+" call ddc#custom#patch_global('sources', ['around'])
+
+" Use matcher_head and sorter_rank.
+" https://github.com/Shougo/ddc-matcher_head
+" https://github.com/Shougo/ddc-sorter_rank
+call ddc#custom#patch_global('sourceOptions', {
+      \ '_': {
+      \   'matchers': ['matcher_head'],
+      \   'sorters': ['sorter_rank']},
+      \ })
+
+" Change source options
+"call ddc#custom#patch_global('sourceOptions', {
+"      \ 'around': {'mark': 'A'},
+"      \ })
+"call ddc#custom#patch_global('sourceParams', {
+"      \ 'around': {'maxSize': 500},
+"      \ })
+
+" Customize settings on a filetype
+"call ddc#custom#patch_filetype(['c', 'cpp'], 'sources', ['around', 'clangd'])
+"call ddc#custom#patch_filetype(['c', 'cpp'], 'sourceOptions', {
+"      \ 'clangd': {'mark': 'C'},
+"      \ })
+"call ddc#custom#patch_filetype('markdown', 'sourceParams', {
+"      \ 'around': {'maxSize': 100},
+"      \ })
+
+" Mappings
+
+" <TAB>: completion.
+inoremap <silent><expr> <TAB>
+\ ddc#map#pum_visible() ? '<C-n>' :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ '<TAB>' : ddc#map#manual_complete()
+
+" <S-TAB>: completion back.
+inoremap <expr><S-TAB>  ddc#map#pum_visible() ? '<C-p>' : '<C-h>'
+
+fu! SaveSession()
+  let l:path = $HOME .. "/.local/share/nvim"
+  call mkdir(l:path, "p")
+  mksession! l:path .. "/session.vim"
+endfunction
+
+fu! RestoreSession()
+  let l:sessfile = $HOME .. "/.local/share/nvim/session.vim"
+  if filereadable(l:sessfile)
+    source l:sessfile
+		delete(l:sessfile)
+  end
+endfunction
+
+fu! Restart()
+  call SaveSession()
+  qa
+endfunction
+
+autocmd VimEnter * call RestoreSession()
+
+" Use ddc.
+call ddc#enable()
