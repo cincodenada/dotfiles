@@ -1,0 +1,75 @@
+#!/bin/bash -e
+
+GITDIR=$(git rev-parse --git-dir)
+ORIG_COMMIT_FILE="$GITDIR/SPLIT_HEAD"
+
+err() {
+  echo $1
+  exit 1
+}
+
+start() {
+  ORIG_COMMIT=$(git rev-parse HEAD)
+  echo $ORIG_COMMIT > $GITDIR/SPLIT_HEAD
+
+  git reset -N HEAD^
+  echo "Commit rolled back, stage changes and run 'git split --continue' to add a split commit, and 'git split --finish' to commit all remaining changes"
+}
+
+commit() {
+  ORIG_COMMIT=$(cat $ORIG_COMMIT_FILE) || err "Not currently splitting!"
+  git commit -c $ORIG_COMMIT "$@"
+  if [ -z "$(git diff HEAD $ORIG_COMMIT)" ]; then
+    cleanup
+    echo "Split finished"
+  else
+    echo "Split committed, run 'git split --continue' to add another"
+  fi
+}
+
+finish() {
+  ORIG_COMMIT=$(cat $ORIG_COMMIT_FILE) || err "Not currently splitting!"
+  git add -u
+  git commit -c $ORIG_COMMIT "$@"
+  cleanup
+  echo "Split finished"
+}
+
+reset() {
+  ORIG_COMMIT=$(cat $ORIG_COMMIT_FILE) || err "Not currently splitting!"
+  git reset --hard $ORIG_COMMIT
+  cleanup
+}
+
+cleanup() {
+  rm $ORIG_COMMIT_FILE
+}
+
+help() {
+  echo "Usage:
+git split start
+
+# Stage partial changes with git add -p or similar
+git add -p
+git split --continue
+
+# Do as many partial changes as you like
+git add -p
+git split --continue
+
+# Commit all remaining changes with --finish
+git split --finish
+
+Other commands:
+git split --abort to discard changes
+git split -h for this help"
+}
+
+
+case ${1##*-} in
+  start|"") start ;;
+  commit|continue) commit ;;
+  finish) finish ;;
+  reset|abort) reset ;;
+  *) help ;;
+esac
