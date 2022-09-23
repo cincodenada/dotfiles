@@ -35,9 +35,6 @@ need_push () {
 
 DIRECTORY_NAME="%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 
-exit_code(){
-  echo "%(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
-}
 
 itime() {
   date=""
@@ -51,6 +48,18 @@ itime() {
     fi
   fi
   date -j -u -v+1H $date | awk -F'[ :]' '{printf "@%03.0f", ($6+$5*60+$4*3600)/86.4}'
+}
+
+shlvl() {
+  IGNORE=1
+  if [ -n "$TMUX" ]; then
+    IGNORE=2
+  fi
+
+  EFFECTIVE=$(($SHLVL-$IGNORE))
+  if [ $EFFECTIVE -gt 0 ]; then
+    printf "|%.s" {1..$EFFECTIVE}
+  fi
 }
 
 # Check untracked files
@@ -96,9 +105,11 @@ BRANCH_COLOR='%1(c.'$fg_bold[blue]'.%1(u.'$fg_bold[red]'.'$fg_bold[green]'))'
 # If there are staged and unstaged changes, add an asterisk so we can distinguish between that and only staged
 BRANCH_SUFFIX='%1(u.%1(c.*.).)'
 BASE_FORMAT="on %{$BRANCH_COLOR%}%b$BRANCH_SUFFIX%{$reset_color%} $fg_bold[yellow]%m$reset_color"
+EXIT_CODE="%(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
 zstyle ':vcs_info:git:*' actionformats "$BASE_FORMAT (%a)"
 zstyle ':vcs_info:git:*' formats "$BASE_FORMAT"
-export PROMPT=$'\n%{$fg_bold[blue]%}$(itime)%{$reset_color%} $DIRECTORY_NAME ${vcs_info_msg_0_}\n› '
+export PROMPT=$'\n%{$fg_bold[blue]%}$(itime)%{$reset_color%} $DIRECTORY_NAME ${vcs_info_msg_0_}\
+%{$fg[yellow]%}$(shlvl)%{$reset_color%}› '
 
 # Keep prompt noise out of set -x for other things
 get_x() {
@@ -115,7 +126,16 @@ precmd() {
   title "zsh" "%m" "%55<...<%~"
 }
 
+demo_prompt() {
+  IS_DEMO="yes"
+  RPS1=""
+  export PROMPT=$'$DIRECTORY_NAME\010› '
+  zle reset-prompt
+}
+
 function zle-line-init zle-keymap-select {
+    [ -z "$IS_DEMO" ] || return
+
     NVM_VERSION=${${NVM_BIN#*node/}%/bin}
     if [ -z NVM_VERSION ]; then
       NVM_PROMPT=""
@@ -123,7 +143,7 @@ function zle-line-init zle-keymap-select {
       NVM_PROMPT="[npm $NVM_VERSION]"
     fi
     VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]% %{$reset_color%}"
-    RPS1="$NVM_PROMPT${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}$(exit_code)$EPS1"
+    RPS1="$NVM_PROMPT${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}$EXIT_CODE$EPS1"
     zle reset-prompt
 }
 zle -N zle-line-init
