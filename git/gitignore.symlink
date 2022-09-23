@@ -57,3 +57,8 @@ jsconfig.json
 ##################
 scratch_
 TODO
+tags
+ctags
+@types
+
+.jira-cli
