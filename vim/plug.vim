@@ -19,9 +19,6 @@ let g:rg_derive_root=1
 """"""
 " IDE stuff
 """"""
-" Plug 'Valloric/YouCompleteMe'
-Plug 'vim-syntastic/syntastic'
-
 Plug 'honza/vim-snippets'
 
 

@@ -276,8 +276,8 @@ inoremap <C-H> <ESC><cmd>Telescope oldfiles<CR>i
 nnoremap <C-H> <cmd>Telescope oldfiles<CR>
 vnoremap <C-H> <cmd>Telescope oldfiles<CR>
 
-" YCM rebindings
-nnoremap <Leader>p :YcmCompleter GoTo<CR>
+" Formatting
+nnoremap <Leader>gd <cmd>JsDoc<CR>
 
 " Insert lines without going into insert mode
 nnoremap ,o o<ESC>
