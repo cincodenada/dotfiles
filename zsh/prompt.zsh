@@ -146,7 +146,7 @@ function zle-line-init zle-keymap-select {
     [ -z "$IS_DEMO" ] || return
 
     NVM_VERSION=${${NVM_BIN#*node/}%/bin}
-    if [ -z NVM_VERSION ]; then
+    if [ -z "$NVM_VERSION" ]; then
       NVM_PROMPT=""
     else
       NVM_PROMPT="[npm $NVM_VERSION]"
