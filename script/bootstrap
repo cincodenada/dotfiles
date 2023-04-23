@@ -65,9 +65,10 @@ install_dotfiles () {
     symname=$(basename "${source%.*}")
     destfile="${source}.dest"
     if [ -f "$destfile" ]; then
-      dir=$(head -n1 $destfile)
-      if [ "$dir" = "#"* ]; then
+      if [ -x $destfile ]; then
         dir=$($destfile)
+      else
+        dir=$(head -n1 $destfile)
       fi
       reldest="$dir/$symname"
     else
