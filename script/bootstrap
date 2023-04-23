@@ -63,7 +63,13 @@ install_dotfiles () {
   for source in `find $DOTFILES_ROOT -maxdepth 2 -name \*.symlink`
   do
     symname=$(basename "${source%.*}")
+    symdir=$(dirname "$source")
     destfile="${source}.dest"
+
+    if [ ! -f "$destfile" ]; then
+      destfile="$symdir/symlink.dest"
+    fi
+
     if [ -f "$destfile" ]; then
       if [ -x $destfile ]; then
         dir=$($destfile)
