@@ -1,0 +1,73 @@
+#!/bin/bash
+
+case $1 in
+	"-h"|"--help"|"")
+		cat << HELP
+Usage: git merge-tree LOCAL REMOTE [BASE]"
+
+Creates worktrees for the given commits and opens a comparison of them all.
+
+Options:
+	-p --path The path to create worktrees in. Defaults to a temporary directory.
+HELP
+		exit 0
+		;;
+	-p|--path)
+		shift;
+		WORKTREE_PATH=$1; shift
+		;;
+esac
+
+if [[ -z "$WORKTREE_PATH" ]]; then
+	WORKTREE_PATH=$(mktemp -d)
+fi
+
+#trap 'rm -r $WORKTREE_PATH' EXIT
+
+LOCAL=$1; shift
+REMOTE=$1; shift
+BASE=$1; shift
+
+function get_hash() {
+	REF=$1
+	
+	if ! REV=$(git rev-parse $REF 2>/dev/null); then
+		echo "Invalid commit reference $REF" 1>&2
+		exit 1
+	fi
+	echo $REV
+}
+
+function set_worktree() {
+	name=$1; shift
+	rev=$1; shift
+
+	worktree="$WORKTREE_PATH/$name"
+	if [[ -d "$worktree" ]]; then
+		git -C "$worktree" checkout $rev
+	else
+		git worktree add $worktree $rev
+	fi
+}
+
+REV_LOCAL=$(get_hash $LOCAL) || exit 1
+
+if [[ -z $REMOTE ]]; then
+	REMOTE=HEAD
+else
+	REV_REMOTE=$(get_hash $REMOTE) || exit 1
+fi
+
+
+
+if [[ -z $BASE ]]; then
+	BASE=$(git merge-base $LOCAL $REMOTE)
+else
+	REV_BASE=$(get_hash $BASE) || exit 1
+fi
+
+set_worktree base $(git rev-parse $BASE)
+set_worktree local $(git rev-parse $LOCAL)
+set_worktree remote $(git rev-parse $REMOTE)
+
+bcompare $WORKTREE_PATH/local $WORKTREE_PATH/remote $WORKTREE_PATH/base  .
