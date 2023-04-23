@@ -26,6 +26,8 @@ compile_commands.json
 #############
 *.sw[lmnop]
 *~
+.RData
+.Rhistory
 
 # Logs and databases #
 ######################
