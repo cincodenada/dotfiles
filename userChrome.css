@@ -1,0 +1,25 @@
+/* hides the native tabs */
+.titlebar-spacer, .toolbar-items {
+  display: none;
+}
+#navigator-toolbox {
+  display: flex;
+  flex-wrap: wrap;
+}
+/* Make children take up the whole line by default */
+#navigator-toolbox > * {
+  width: 100%;
+}
+#titlebar {
+  width: initial;
+}
+#nav-bar {
+  width: 1px;
+}
+.titlebar-buttonbox-container {
+  padding-right: 1em;
+  background: var(--toolbar-bgcolor);
+}
+#nav-bar {
+  flex-grow: 1;
+}
