@@ -3,7 +3,6 @@
 IFS=',' read -ra excludes <<< $1
 shift
 
-search=""
 while [[ -n "$1" && $1 != "-"* ]]; do
   search="$search $1"
   shift
@@ -15,7 +14,7 @@ fi
 
 exclude=""
 for x in $excludes; do
-  exclude="$exclude -name $x -prune"
+  exclude="$exclude -name $x -prune -o"
 done
 
-find $search $exclude -o \( "$@" \) -print
+find $search $exclude \( "$@" \)
