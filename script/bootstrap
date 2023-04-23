@@ -62,7 +62,23 @@ install_dotfiles () {
 
   for source in `find $DOTFILES_ROOT -maxdepth 2 -name \*.symlink`
   do
-    dest="$HOME/.`basename \"${source%.*}\"`"
+    symname=$(basename "${source%.*}")
+    destfile="${source}.dest"
+    if [ -f "$destfile" ]; then
+      dir=$(head -n1 $destfile)
+      if [ "$dir" = "#"* ]; then
+        dir=$($destfile)
+      fi
+      reldest="$dir/$symname"
+    else
+      reldest=".$symname"
+    fi
+    dest="$HOME/$reldest"
+
+    if [ -L $dest ]; then
+      success "Link already installed: $symname"
+      continue
+    fi
 
     if [ -f $dest ] || [ -d $dest ]
     then
@@ -73,7 +89,7 @@ install_dotfiles () {
 
       if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]
       then
-        user "File already exists: `basename $source`, what do you want to do? [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
+        user "File already exists: $symname, what do you want to do? [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
         read -n 1 action
 
         case "$action" in
@@ -96,7 +112,7 @@ install_dotfiles () {
 
       if [ "$overwrite" == "true" ] || [ "$overwrite_all" == "true" ]
       then
-        rm -rf $dest
+        rm -rf "$dest"
         success "removed $dest"
       fi
 
