@@ -83,8 +83,11 @@ install_dotfiles () {
     dest="$HOME/$reldest"
 
     if [ -L $dest ]; then
-      success "Link already installed: $symname"
-      continue
+      target=$(readlink $dest)
+      if [ "$target" = "$source" ]; then
+        success "Link already installed: $symname"
+        continue
+      fi
     fi
 
     if [ -f $dest ] || [ -d $dest ]
@@ -93,6 +96,10 @@ install_dotfiles () {
       overwrite=false
       backup=false
       skip=false
+
+      if [ -L $dest ]; then
+        user "Existing link points to $target\n"
+      fi
 
       if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]
       then
