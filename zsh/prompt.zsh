@@ -114,10 +114,11 @@ BRANCH_COLOR='%1(c.'$fg_bold[blue]'.%1(u.'$fg_bold[red]'.'$fg_bold[green]'))'
 # If there are staged and unstaged changes, add an asterisk so we can distinguish between that and only staged
 BRANCH_SUFFIX='%1(u.%1(c.*.).)'
 BASE_FORMAT="on %{$BRANCH_COLOR%}%b$BRANCH_SUFFIX%{$reset_color%} $fg_bold[yellow]%m$reset_color"
-EXIT_CODE="%(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
+EXIT_CODE="%0(?..%1(?.%{$fg_bold[yellow]%}.%{$fg_bold[red]%}){%?}%{$reset_color%})"
 zstyle ':vcs_info:git:*' actionformats "$BASE_FORMAT (%a)"
 zstyle ':vcs_info:git:*' formats "$BASE_FORMAT"
-export PROMPT=$'\n%{$fg_bold[blue]%}$(itime)%{$reset_color%} $DIRECTORY_NAME ${vcs_info_msg_0_}\
+FIRSTLINE="%{$fg_bold[blue]%}$(itime)%{$reset_color%} $DIRECTORY_NAME"
+export PROMPT=$'\n%$COLUMNS>›>$FIRSTLINE ${vcs_info_msg_0_}%<<\
 %{$fg[yellow]%}$(shlvl)%{$reset_color%}› '
 
 # Keep prompt noise out of set -x for other things
@@ -143,6 +144,7 @@ demo_prompt() {
 }
 
 function zle-line-init zle-keymap-select {
+    set $(get_x)
     [ -z "$IS_DEMO" ] || return
 
     NVM_VERSION=${${NVM_BIN#*node/}%/bin}
