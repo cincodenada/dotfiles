@@ -44,6 +44,16 @@ require('orgmode').setup({
 })
 
 local util = require 'lspconfig.util'
+local configs = require 'lspconfig.configs'
+
+configs.ast_grep = {
+	default_config = {
+		cmd = {'sg', 'lsp'};
+		filetypes = {'typescript', 'javascript'};
+		single_file_support = true;
+		root_dir = util.root_pattern('.git', 'sgconfig.yml');
+	};
+}
 
 --local fallback_jump = function()
 --	local oldlevel = vim.lsp.log.get_level()
@@ -183,6 +193,13 @@ require'lspconfig'.stylelint_lsp.setup{
 	}
 }
 
+require('eslint').setup({
+	bin = 'eslint_d',
+	code_actions = {
+		enable = true,
+	}
+})
+
 require('prettier').setup({
 	bin = 'prettier', -- or `prettierd`
 	filetypes = {
@@ -207,7 +224,7 @@ require'telescope'.setup{
 		path_display={"smart"}
 	}
 }
-require('telescope').load_extension('fzy_native')
+require('telescope').load_extension('fzf')
 require'telescope'.load_extension'repo'
 
 require('nvim-test').setup({
@@ -216,6 +233,7 @@ require('nvim-test').setup({
 	}
 })
 
+require('coverage').setup()
 
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 require('print_table')
