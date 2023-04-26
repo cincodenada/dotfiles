@@ -12,8 +12,7 @@ vim.keymap.set('n', '<Leader>ew', "<cmd>Trouble<cr>")
 vim.keymap.set('n', '<Leader>ei', vim.diagnostic.open_float)
 vim.keymap.set('n', '<Leader>i', vim.lsp.buf.hover)
 -- TODO: When nvim 8.0 comes out replace this with format()
-vim.keymap.set('n', '<Leader>q', function() vim.lsp.buf.formatting_seq_sync({}, 5000) end )
-
+vim.keymap.set('n', '<Leader>q', vim.lsp.buf.format)
 
 -- Load custom tree-sitter grammar for org filetype
 require('orgmode').setup_ts_grammar()
