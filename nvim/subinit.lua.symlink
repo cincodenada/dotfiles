@@ -177,7 +177,7 @@ require("null-ls").setup({
 })
 
 require'lspconfig'.stylelint_lsp.setup{
-  cmd = { "/Users/joel/.nvm/versions/node/v16.14.2/bin/stylelint-lsp", "--stdio" },
+  cmd = { "/Users/joel/.nvm/versions/node/v16.17.1/bin/stylelint-lsp", "--stdio" },
   settings = {
     stylelintplus = {}
   }

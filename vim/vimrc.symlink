@@ -83,7 +83,7 @@ nnoremap <C-n> :NodeInspectStepOver<cr>
 
 " Add Node to path for tsserver
 "let $NVM_NODE_VERSION='12'
-let $PATH=$HOME . '/.nvm/versions/node/v14.19.0/bin:' . $PATH
+let $PATH=$HOME . '/.nvm/versions/node/v16.17.1/bin:' . $PATH
 
 function! s:FindFile(file, fromDir, top_level)
   let l:path = a:fromDir
