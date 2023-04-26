@@ -193,7 +193,7 @@ require("null-ls").setup({
 		require("null-ls").builtins.diagnostics.eslint_d,
 		require("null-ls").builtins.formatting.eslint_d,
 		require("null-ls").builtins.completion.spell,
-		--require("null-ls").builtins.formatting.prettier,
+		require("null-ls").builtins.formatting.prettier,
 	},
 	root_dir = util.root_pattern("package.json", ".git")
 })
