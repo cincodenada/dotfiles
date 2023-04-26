@@ -105,10 +105,9 @@ end
 require("typescript").setup({
 	server = {
 		on_attach = setup_lsp,
-		settings: {
+		settings = {
 			diagnostics = {
-				ignoredCodes: [
-					7044, -- Parameter type inference
+				ignoredCodes = {
 					7047, -- Same?
 					80001, -- CommonJS module
 					6133, -- delared-not-used, duplicative of linting and incorrect for React
@@ -116,7 +115,7 @@ require("typescript").setup({
 					2339, -- property does not exist
 					2349, -- expression is not callable
 					2306, -- not a module
-				]
+				}
 			}
 		}
 	}
