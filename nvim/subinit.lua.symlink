@@ -89,24 +89,25 @@ local setup_lsp = function(client, use_formatter)
 	-- require('completion').on_attach()
 end
 
-local setup_ts = function(client)
-	setup_lsp(client)
-
-	local ts_utils = require("nvim-lsp-ts-utils")
-	ts_utils.setup({
-		filter_out_diagnostics_by_code = {
-			7044, -- Parameter type inference
-			7047, -- Same?
-			80001, -- CommonJS module
-			6133, -- delared-not-used, duplicative of linting and incorrect for React
-			-- Not enough info:
-			2339, -- property does not exist
-			2349, -- expression is not callable
-			2306, -- not a module
+require("typescript").setup({
+	server = {
+		on_attach = setup_lsp,
+		settings: {
+			diagnostics = {
+				ignoredCodes: [
+					7044, -- Parameter type inference
+					7047, -- Same?
+					80001, -- CommonJS module
+					6133, -- delared-not-used, duplicative of linting and incorrect for React
+					-- Not enough info:
+					2339, -- property does not exist
+					2349, -- expression is not callable
+					2306, -- not a module
+				]
+			}
 		}
-	})
-	ts_utils.setup_client(client)
-end
+	}
+})
 
 local source_abbrev = {
 	typescript = "TS",
