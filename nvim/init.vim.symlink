@@ -20,8 +20,8 @@ Plug 'MunifTanjim/eslint.nvim'
 Plug 'andythigpen/nvim-coverage'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-symbols.nvim'
-"Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+"Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'cljoly/telescope-repo.nvim'
 
 Plug 'ellisonleao/glow.nvim', {'branch': 'main'}
