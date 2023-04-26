@@ -81,5 +81,5 @@ Plug 'Shougo/ddc-sorter_rank'
 Plug 'Shougo/ddc-ui-native'
 
 if !has('nvim')
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 endif
