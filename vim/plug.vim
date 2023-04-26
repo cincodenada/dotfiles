@@ -8,7 +8,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 
 Plug 'simnalamburt/vim-mundo'
-Plug 'ruanyl/coverage.vim'
+"Plug 'ruanyl/coverage.vim'
 
 "Plug 'jceb/vim-orgmode'
 Plug 'svermeulen/vim-macrobatics'
