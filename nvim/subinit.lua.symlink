@@ -35,6 +35,7 @@ require('orgmode').setup({
 	mappings = {
 		org = {
 			org_toggle_checkbox = '<Leader>cc',
+			org_meta_return = '<cr>',
 		}
 	},
 	org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
@@ -42,6 +43,7 @@ require('orgmode').setup({
 		t = { description = 'Task', template = "* TODO %?\n  %u" },
 		f = { description = 'File Task', template = "* TODO %?\n	%u\n	%a" },
 	},
+	org_blank_before_new_entry = { heading = false },
 })
 
 local util = require 'lspconfig.util'
