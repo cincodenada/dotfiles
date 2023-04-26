@@ -47,7 +47,8 @@ call ddc#custom#patch_global('ui', 'native')
 
 command CloseFloating lua for _, win in ipairs(vim.api.nvim_list_wins()) do local config = vim.api.nvim_win_get_config(win); if config.relative ~= "" then vim.api.nvim_win_close(win, false); print('Closing window', win) end end<cr>
 
-lua loadfile(vim.fn.stdpath("config") .. "/subinit.lua")()
+lua subinit, err = loadfile(vim.fn.stdpath("config") .. "/subinit.lua")
+lua if err then print("Error loading subinit.lua: "..err) else subinit() end
 
 augroup lsp
 	autocmd!
