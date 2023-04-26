@@ -143,11 +143,6 @@ vim.diagnostic.config{
 	}
 }
 
-require('lspconfig').tsserver.setup{
-	init_options = require("nvim-lsp-ts-utils").init_options,
-	on_attach = setup_ts
-}
-
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
