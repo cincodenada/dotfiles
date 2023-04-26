@@ -97,11 +97,29 @@ configs.ast_grep = {
 --	end
 --end
 
-local setup_lsp = function(client, use_formatter)
+local setup_lsp = function(client, bufnr, use_formatter)
 	if not use_formatter then
 		client.server_capabilities.documentFormattingProvider = false
 		client.server_capabilities.documentRangeFormattingProvider = false
 	end
+
+	local filetype = vim.filetype.match({ buf = bufnr })
+	local ignoredCodes = (filetype and vim.startswith(filetype, "javascript")) and {
+		7044, -- Parameter type inference
+		7047, -- Same?
+		80001, -- CommonJS module
+		6133, -- delared-not-used, duplicative of linting and incorrect for React
+		-- Not enough info:
+		2339, -- property does not exist
+		2349, -- expression is not callable
+		2306, -- not a module
+	} or {}
+
+	client.notify('workspace/didChangeConfiguration', {
+		diagnostics = {
+			ignoredCodes = ignoredCodes
+		}
+	})
 
 	-- See `:help nvim_buf_set_keymap()` for more information
 	vim.api.nvim_buf_set_keymap(0, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
@@ -120,22 +138,9 @@ local setup_lsp = function(client, use_formatter)
 	-- require('completion').on_attach()
 end
 
-require("typescript").setup({
+require('typescript').setup({
 	server = {
 		on_attach = setup_lsp,
-		settings = {
-			diagnostics = {
-				ignoredCodes = {
-					7047, -- Same?
-					80001, -- CommonJS module
-					6133, -- delared-not-used, duplicative of linting and incorrect for React
-					-- Not enough info:
-					2339, -- property does not exist
-					2349, -- expression is not callable
-					2306, -- not a module
-				}
-			}
-		}
 	}
 })
 
@@ -203,7 +208,7 @@ require('trouble').setup{
 }
 
 require("null-ls").setup({
-	on_attach = function(client) setup_lsp(client, true) end,
+	on_attach = function(client, bufnr) setup_lsp(client, bufnr, true) end,
 	sources = {
 		--require("null-ls").builtins.diagnostics.eslint,
 		--require("null-ls").builtins.code_actions.eslint_d,
