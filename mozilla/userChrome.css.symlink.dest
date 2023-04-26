@@ -1,10 +1,16 @@
 #/bin/bash
 
 # From https://askubuntu.com/a/354907
-cd ~/.mozilla/firefox/
+system=$(uname -s)
+if [[ "$system" == "Darwin" ]]; then
+  profileBase="Library/Application Support/Firefox/"
+else
+  profileBase=.mozilla/firefox/
+fi
+cd "$HOME/$profileBase"
 if [[ $(grep '\[Profile[^0]\]' profiles.ini) ]]
 then PROFPATH=$(grep -E '^\[Profile|^Path|^Default' profiles.ini | grep -1 '^Default=1' | grep '^Path' | cut -c6-)
 else PROFPATH=$(grep 'Path=' profiles.ini | sed 's/^Path=//')
 fi
 
-echo ".mozilla/firefox/$PROFPATH"
+echo "$profileBase/$PROFPATH"
