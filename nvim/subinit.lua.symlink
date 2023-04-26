@@ -68,8 +68,8 @@ configs.ast_grep = {
 
 local setup_lsp = function(client, use_formatter)
 	if not use_formatter then
-		client.resolved_capabilities.document_formatting = false
-		client.resolved_capabilities.document_range_formatting = false
+		client.server_capabilities.documentFormattingProvider = false
+		client.server_capabilities.documentRangeFormattingProvider = false
 	end
 
 	-- See `:help nvim_buf_set_keymap()` for more information
