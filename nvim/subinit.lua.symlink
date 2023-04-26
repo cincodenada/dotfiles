@@ -1,3 +1,4 @@
+-- vim: set noet
 -- Custom keys
 --vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
 --vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
