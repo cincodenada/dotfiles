@@ -56,6 +56,7 @@ Plug 'Galicarnax/vim-regex-syntax'
 Plug 'godlygeek/tabular'
 "Plug 'preservim/vim-markdown'
 Plug 'chrisbra/Colorizer'
+Plug 'imsnif/kdl.vim'
 
 " Colors
 Plug 'vim-scripts/mayansmoke'

@@ -60,6 +60,18 @@ require'nvim-treesitter.configs'.setup {
 	ensure_installed = {'org'}, -- Or run :TSUpdate org
 }
 
+local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+parser_config.kdl = {
+  install_info = {
+    url = "https://github.com/spaarmann/tree-sitter-kdl",
+    files = { "src/parser.c", "src/scanner.c" },
+    branch = "main",
+  },
+}
+
+local ft_to_parser = require('nvim-treesitter.parsers').filetype_to_parsername
+ft_to_parser.kdl = "kdl"
+
 require('orgmode').setup({
 	org_agenda_files = {'~/Sync/org/*'},
 	org_default_notes_file = '~/Sync/org/refile.org',
