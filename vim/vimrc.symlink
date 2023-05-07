@@ -4,6 +4,13 @@ set autochdir
 let mapleader=" "
 let maplocalleader=" "
 
+" Add Node to path for tsserver
+let s:node_path = $HOME . '/.nvm/versions/node/v16.15.0/bin'
+let g:coc_node_path = s:node_path . '/node'
+let $PATH.=':' . s:node_path
+let $PATH.=':' . $HOME . '/.cargo/bin'
+let $PATH.=':' . $HOME . '/.deno/bin'
+
 if !exists("g:plugs")
   call plug#begin('~/.vim/plugged')
   source ~/.dotfiles/vim/plug.vim
@@ -80,10 +87,6 @@ nnoremap <silent><F10> :NodeInspectStop<cr>
 " Quick stepping
 nnoremap <C-S-n> :NodeInspectStepInto<cr>
 nnoremap <C-n> :NodeInspectStepOver<cr>
-
-" Add Node to path for tsserver
-"let $NVM_NODE_VERSION='12'
-let $PATH=$HOME . '/.nvm/versions/node/v14.19.0/bin:' . $PATH
 
 function! s:FindFile(file, fromDir, top_level)
   let l:path = a:fromDir

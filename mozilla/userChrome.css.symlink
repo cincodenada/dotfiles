@@ -10,9 +10,6 @@
 #navigator-toolbox > * {
   width: 100%;
 }
-#titlebar {
-  width: initial;
-}
 #nav-bar {
   width: 1px;
 }
