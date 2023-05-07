@@ -8,7 +8,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 
 Plug 'simnalamburt/vim-mundo'
-Plug 'ruanyl/coverage.vim'
+"Plug 'ruanyl/coverage.vim'
 
 "Plug 'jceb/vim-orgmode'
 Plug 'svermeulen/vim-macrobatics'
@@ -56,6 +56,7 @@ Plug 'Galicarnax/vim-regex-syntax'
 Plug 'godlygeek/tabular'
 "Plug 'preservim/vim-markdown'
 Plug 'chrisbra/Colorizer'
+Plug 'imsnif/kdl.vim'
 
 " Colors
 Plug 'vim-scripts/mayansmoke'
@@ -78,7 +79,8 @@ Plug 'Shougo/ddc.vim'
 Plug 'vim-denops/denops.vim'
 Plug 'Shougo/ddc-matcher_head'
 Plug 'Shougo/ddc-sorter_rank'
+Plug 'Shougo/ddc-ui-native'
 
 if !has('nvim')
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 endif

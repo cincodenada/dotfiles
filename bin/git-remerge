@@ -1,0 +1,52 @@
+#!/bin/bash
+case $1 in
+	-p|--path)
+		shift;
+		WORKTREE_PATH=$1; shift
+		;;
+	-h|--help)
+		echo "Usage: git remerge [--path <worktree_path>] <compare_branch>"
+		exit
+		;;
+esac
+
+COMPARE_BRANCH=$1; shift
+
+HEAD=$(git rev-parse HEAD)
+MERGE_HEAD=$(git rev-parse MERGE_HEAD 2> /dev/null)
+
+if [[ "$MERGE_HEAD" != "MERGE_HEAD" ]]; then
+	# We're in a merge, so just use HEAD/MERGE_HEAD
+	echo "Currently merging, using MERGE_HEAD"
+	REV_local=$HEAD
+	REV_remote=$MERGE_HEAD
+else
+	parents=($(git show --format="%P" --no-patch))
+	num_parents=${#parents[@]}
+	case $num_parents in
+		1)
+			if [[ -z $COMPARE_BRANCH ]]; then
+				echo "Not a merge commit, must specify compare branch"
+				exit 1
+			fi
+			echo "Comparing HEAD to $COMPARE_BRANCH"
+			REV_local=$HEAD
+			REV_remote=$COMPARE_BRANCH
+			;;
+		2) 
+			echo "Using merge commit at HEAD"
+			REV_local=${parents[0]}
+			REV_remote=${parents[1]}
+			;;
+		*)
+			echo "Too many parents!"
+			exit 1
+			;;
+	esac
+fi
+
+if [[ -n $WORKTREE_PATH ]]; then
+	patharg="--path $WORKTREE_PATH"
+fi
+
+git merge-diff $patharg $REV_local $REV_remote

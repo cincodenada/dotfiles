@@ -49,7 +49,7 @@ setup_gitconfig () {
 }
 
 link_files () {
-  ln -s $1 $2
+  ln -s "$1" "$2"
   success "linked $1 to $2"
 }
 
@@ -82,22 +82,22 @@ install_dotfiles () {
     fi
     dest="$HOME/$reldest"
 
-    if [ -L $dest ]; then
-      target=$(readlink $dest)
+    if [ -L "$dest" ]; then
+      target=$(readlink "$dest")
       if [ "$target" = "$source" ]; then
         success "Link already installed: $symname"
         continue
       fi
     fi
 
-    if [ -f $dest ] || [ -d $dest ]
+    if [ -f "$dest" ] || [ -d "$dest" ]
     then
 
       overwrite=false
       backup=false
       skip=false
 
-      if [ -L $dest ]; then
+      if [ -L "$dest" ]; then
         user "Existing link points to $target\n"
       fi
 
@@ -132,19 +132,19 @@ install_dotfiles () {
 
       if [ "$backup" == "true" ] || [ "$backup_all" == "true" ]
       then
-        mv $dest $dest\.backup
+        mv "$dest" "$dest\.backup"
         success "moved $dest to $dest.backup"
       fi
 
       if [ "$skip" == "false" ] && [ "$skip_all" == "false" ]
       then
-        link_files $source $dest
+        link_files "$source" "$dest"
       else
         success "skipped $source"
       fi
 
     else
-      link_files $source $dest
+      link_files "$source" "$dest"
     fi
 
   done

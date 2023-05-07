@@ -12,14 +12,16 @@ Plug 'nvim-lua/plenary.nvim'
 
 Plug 'neovim/nvim-lspconfig'
 Plug 'jose-elias-alvarez/typescript.nvim'
-Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
+"Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'MunifTanjim/prettier.nvim'
+Plug 'MunifTanjim/eslint.nvim'
 
+Plug 'andythigpen/nvim-coverage'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-symbols.nvim'
-"Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+"Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'cljoly/telescope-repo.nvim'
 
 Plug 'ellisonleao/glow.nvim', {'branch': 'main'}
@@ -41,10 +43,12 @@ call ddc#custom#patch_global('sourceOptions', {
       \   'mark': 'lsp',
       \   'forceCompletionPattern': '\.\w*|:\w*|->\w*|\S\/\S*' },
       \ })
+call ddc#custom#patch_global('ui', 'native')
 
 command CloseFloating lua for _, win in ipairs(vim.api.nvim_list_wins()) do local config = vim.api.nvim_win_get_config(win); if config.relative ~= "" then vim.api.nvim_win_close(win, false); print('Closing window', win) end end<cr>
 
-lua loadfile(vim.fn.stdpath("config") .. "/subinit.lua")()
+lua subinit, err = loadfile(vim.fn.stdpath("config") .. "/subinit.lua")
+lua if err then print("Error loading subinit.lua: "..err) else subinit() end
 
 augroup lsp
 	autocmd!
