@@ -53,7 +53,7 @@ function set_worktree() {
 REV_LOCAL=$(get_hash $LOCAL) || exit 1
 
 if [[ -z $REMOTE ]]; then
-	REMOTE=HEAD
+	REV_REMOTE=$(get_hash HEAD) || exit 1
 else
 	REV_REMOTE=$(get_hash $REMOTE) || exit 1
 fi
@@ -61,13 +61,13 @@ fi
 
 
 if [[ -z $BASE ]]; then
-	BASE=$(git merge-base $LOCAL $REMOTE)
+	REV_BASE=$(git merge-base $REV_LOCAL $REV_REMOTE)
 else
 	REV_BASE=$(get_hash $BASE) || exit 1
 fi
 
-set_worktree base $(git rev-parse $BASE)
-set_worktree local $(git rev-parse $LOCAL)
-set_worktree remote $(git rev-parse $REMOTE)
+set_worktree base $REV_BASE
+set_worktree local $REV_LOCAL
+set_worktree remote $REV_REMOTE
 
 bcompare $WORKTREE_PATH/local $WORKTREE_PATH/remote $WORKTREE_PATH/base  .
