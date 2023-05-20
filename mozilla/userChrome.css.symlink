@@ -5,21 +5,22 @@
 #navigator-toolbox {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row;
 }
 /* Make children take up the whole line by default */
+/*
 #navigator-toolbox > * {
   width: 100%;
 }
+*/
 #titlebar {
   width: initial;
 }
 #nav-bar {
-  width: 1px;
+  flex-basis: 1px;
+  flex-grow: 1;
 }
 .titlebar-buttonbox-container {
   padding-right: 1em;
   background: var(--toolbar-bgcolor);
-}
-#nav-bar {
-  flex-grow: 1;
 }
