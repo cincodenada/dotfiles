@@ -23,11 +23,23 @@ local function make_quickfix(line)
     }
 end
 
+local function get_range(opts)
+    local s = opts.line1 - 1
+    local e = opts.line2
+
+    if opts.range == 0 then
+        return 0, -1
+    elseif opts.range == 1 then
+        return s, s
+    else
+        return s, e
+    end
+end
+
 local function call_sg(opts)
-    local line_start = opts.range > 0 and opts.line1 or 0
-    local line_end = opts.range > 1 and opts.line2 or -1
-    --print(vim.inspect(opts))
-    local input = vim.api.nvim_buf_get_lines(0, line_start, line_end, true)
+    local line_start, line_end = get_range(opts)
+    local inputlines = vim.api.nvim_buf_get_lines(0, line_start, line_end, true)
+    --print(vim.inspect(inputlines), line_start, line_end)
 
     local search, replace = parse_args(opts.args)
     --print(vim.inspect(opts), search, replace, vim.fn.expand("%"))
@@ -42,17 +54,24 @@ local function call_sg(opts)
             "--update-all",
         })
     end
-    local result = tostring(sg({__input=vim.fn.join(input, "\n")}, unpack(sgargs)))
-    local lines = vim.split(result, "\n", { trimempty = true })
-    if replace then
-        vim.api.nvim_buf_set_lines(0, line_start, line_end, true, lines)
-    else
+    local input = vim.fn.join(inputlines, "\n")
+    local result = sg({__input=input}, unpack(sgargs))
+    -- print(vim.inspect(result), input, vim.inspect(sgargs))
+    if result then
+        local lines = vim.split(tostring(result), "\n", { trimempty = true })
         --print(vim.inspect(lines))
-        file_list=vim.tbl_map(make_quickfix, lines)
-        --print(vim.inspect(file_list))
-        vim.fn.setqflist(file_list, 'r')
-        vim.cmd.cw()
+        if replace then
+            -- TODO: Handle error conditions?
+            if vim.tbl_count(lines) > 0 then
+                vim.api.nvim_buf_set_lines(0, line_start, line_end, true, lines)
+            end
+        else
+            file_list=vim.tbl_map(make_quickfix, lines)
+            --print(vim.inspect(file_list))
+            vim.fn.setqflist(file_list, 'r')
+            vim.cmd.cw()
+        end
     end
 end
 
-vim.api.nvim_create_user_command('Sg', call_sg, {})
+vim.api.nvim_create_user_command('Sg', call_sg, {range=true})
