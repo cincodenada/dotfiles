@@ -6,8 +6,7 @@ unpack = unpack or table.unpack
 local function parse_args(opts)
     local args = {}
     for _, arg in pairs(opts.fargs) do
-        local escaped = arg:gsub("%$", "\\$")
-        table.insert(args, escaped)
+        table.insert(args, vim.fn.shellescape(arg))
     end
     return unpack(args)
 end
