@@ -2,9 +2,10 @@ local sh = require('sh')
 
 unpack = unpack or table.unpack
 
-local function parse_args(argstr)
+-- TODO: Handle quoted whitespace??
+local function parse_args(opts)
     local args = {}
-    for arg in string.gmatch(argstr, '"[^"]+"') do
+    for _, arg in pairs(opts.fargs) do
         local escaped = arg:gsub("%$", "\\$")
         table.insert(args, escaped)
     end
@@ -41,7 +42,7 @@ local function call_sg(opts)
     local inputlines = vim.api.nvim_buf_get_lines(0, line_start, line_end, true)
     --print(vim.inspect(inputlines), line_start, line_end)
 
-    local search, replace = parse_args(opts.args)
+    local search, replace = parse_args(opts)
     --print(vim.inspect(opts), search, replace, vim.fn.expand("%"))
     local sgargs = {
         "--stdin",
@@ -74,4 +75,7 @@ local function call_sg(opts)
     end
 end
 
-vim.api.nvim_create_user_command('Sg', call_sg, {range=true})
+vim.api.nvim_create_user_command('Sg', call_sg, {
+    range=true,
+    nargs='+',
+})
