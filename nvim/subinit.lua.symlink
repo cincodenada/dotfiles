@@ -16,18 +16,18 @@ vim.keymap.set('n', '<Leader>q', vim.lsp.buf.format)
 -- Temp fix for javascript indenting
 -- https://github.com/nvim-treesitter/nvim-treesitter/issues/1167
 function _G.javascript_indent()
-  local line = vim.fn.getline(vim.v.lnum)
-  local prev_line = vim.fn.getline(vim.v.lnum - 1)
-  if line:match('^%s*[%*/]%s*') then
-    if prev_line:match('^%s*%*%s*') then
-      return vim.fn.indent(vim.v.lnum - 1)
-    end
-    if prev_line:match('^%s*/%*%*%s*$') then
-      return vim.fn.indent(vim.v.lnum - 1) + 1
-    end
-  end
+	local line = vim.fn.getline(vim.v.lnum)
+	local prev_line = vim.fn.getline(vim.v.lnum - 1)
+	if line:match('^%s*[%*/]%s*') then
+		if prev_line:match('^%s*%*%s*') then
+			return vim.fn.indent(vim.v.lnum - 1)
+		end
+		if prev_line:match('^%s*/%*%*%s*$') then
+			return vim.fn.indent(vim.v.lnum - 1) + 1
+		end
+	end
 
-  return vim.fn['GetJavascriptIndent']()
+	return vim.fn['GetJavascriptIndent']()
 end
 
 vim.cmd[[autocmd FileType javascript setlocal indentexpr=v:lua.javascript_indent()]]
@@ -58,11 +58,11 @@ require'nvim-treesitter.configs'.setup {
 
 local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
 parser_config.kdl = {
-  install_info = {
-    url = "https://github.com/spaarmann/tree-sitter-kdl",
-    files = { "src/parser.c", "src/scanner.c" },
-    branch = "main",
-  },
+	install_info = {
+		url = "https://github.com/spaarmann/tree-sitter-kdl",
+		files = { "src/parser.c", "src/scanner.c" },
+		branch = "main",
+	},
 }
 
 local ft_to_parser = require('nvim-treesitter.parsers').filetype_to_parsername
