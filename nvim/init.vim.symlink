@@ -1,5 +1,6 @@
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath=&runtimepath
+set autochdir
 
 call plug#begin('~/.vim/plugged')
 
@@ -7,6 +8,7 @@ source ~/.dotfiles/vim/plug.vim
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-orgmode/orgmode'
+Plug 'mdietrich16/org-idle'
 
 Plug 'nvim-lua/plenary.nvim'
 
@@ -23,11 +25,14 @@ Plug 'nvim-telescope/telescope-symbols.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 "Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'cljoly/telescope-repo.nvim'
+Plug 'Marskey/telescope-sg'
+Plug '$HOME/.dotfiles/vim/myplugs/nvim-sg'
 
 Plug 'ellisonleao/glow.nvim', {'branch': 'main'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 Plug 'folke/trouble.nvim'
+Plug 'klen/nvim-test'
 
 Plug 'Shougo/ddc-nvim-lsp'
 
@@ -55,9 +60,11 @@ augroup lsp
 	autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float({ focusable=false })
 augroup END
 nmap <Leader>oo <cmd>Telescope find_files cwd=~/Sync/org<CR>
+nmap <Leader>oo <cmd>Telescope find_files cwd=~/Sync/org<CR>
 
 " References
 nnoremap gr <cmd>lua vim.lsp.buf.references()<cr>
+nnoremap <C-[> <cmd>lua vim.lsp.buf.references()<cr>
 
 " Find files using Telescope command-line sugar.
 nnoremap <leader>ff <cmd>Telescope find_files<cr>

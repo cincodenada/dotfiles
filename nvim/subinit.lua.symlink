@@ -1,7 +1,7 @@
--- vim: set noet
+-- vim:noet:sw=2:ts=2
 -- Custom keys
 --vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
---vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
+
 --vim.keymap.set('n', '<Leader>ep', vim.diagnostic.goto_prev)
 
 vim.keymap.set('n', '<Leader>es', vim.diagnostic.show)
@@ -11,27 +11,23 @@ vim.keymap.set('n', '<Leader>ep', function() vim.diagnostic.goto_prev({severity=
 vim.keymap.set('n', '<Leader>ew', "<cmd>Trouble<cr>")
 vim.keymap.set('n', '<Leader>ei', vim.diagnostic.open_float)
 vim.keymap.set('n', '<Leader>i', vim.lsp.buf.hover)
--- TODO: When nvim 8.0 comes out replace this with format()
 vim.keymap.set('n', '<Leader>q', vim.lsp.buf.format)
-
--- Load custom tree-sitter grammar for org filetype
-require('orgmode').setup_ts_grammar()
 
 -- Temp fix for javascript indenting
 -- https://github.com/nvim-treesitter/nvim-treesitter/issues/1167
 function _G.javascript_indent()
-  local line = vim.fn.getline(vim.v.lnum)
-  local prev_line = vim.fn.getline(vim.v.lnum - 1)
-  if line:match('^%s*[%*/]%s*') then
-    if prev_line:match('^%s*%*%s*') then
-      return vim.fn.indent(vim.v.lnum - 1)
-    end
-    if prev_line:match('^%s*/%*%*%s*$') then
-      return vim.fn.indent(vim.v.lnum - 1) + 1
-    end
-  end
+	local line = vim.fn.getline(vim.v.lnum)
+	local prev_line = vim.fn.getline(vim.v.lnum - 1)
+	if line:match('^%s*[%*/]%s*') then
+		if prev_line:match('^%s*%*%s*') then
+			return vim.fn.indent(vim.v.lnum - 1)
+		end
+		if prev_line:match('^%s*/%*%*%s*$') then
+			return vim.fn.indent(vim.v.lnum - 1) + 1
+		end
+	end
 
-  return vim.fn['GetJavascriptIndent']()
+	return vim.fn['GetJavascriptIndent']()
 end
 
 vim.cmd[[autocmd FileType javascript setlocal indentexpr=v:lua.javascript_indent()]]
@@ -62,31 +58,48 @@ require'nvim-treesitter.configs'.setup {
 
 local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
 parser_config.kdl = {
-  install_info = {
-    url = "https://github.com/spaarmann/tree-sitter-kdl",
-    files = { "src/parser.c", "src/scanner.c" },
-    branch = "main",
-  },
+	install_info = {
+		url = "https://github.com/spaarmann/tree-sitter-kdl",
+		files = { "src/parser.c", "src/scanner.c" },
+		branch = "main",
+	},
 }
-
-local ft_to_parser = require('nvim-treesitter.parsers').filetype_to_parsername
-ft_to_parser.kdl = "kdl"
+vim.treesitter.language.register("kdl", "kdl")
 
 require('orgmode').setup({
-	org_agenda_files = {'~/Sync/org/*'},
-	org_default_notes_file = '~/Sync/org/refile.org',
+	org_agenda_files = { '~/Sync/org/**/*' },
+	org_default_notes_file = '~/Sync/org/tailormed/tofile.org',
 	mappings = {
 		org = {
 			org_toggle_checkbox = '<Leader>cc',
 			org_meta_return = '<cr>',
+			org_open_at_point = 'gx',
 		}
 	},
+	win_split_mode = "topleft 10new +:set\\ winfixheight",
 	org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
-	org_agenda_templates = {
+	org_capture_templates = {
 		t = { description = 'Task', template = "* TODO %?\n  %u" },
 		f = { description = 'File Task', template = "* TODO %?\n	%u\n	%a" },
 	},
 	org_blank_before_new_entry = { heading = false },
+	--org_agenda_skip_scheduled_if_done = true,
+	--org_agenda_skip_deadline_if_done = true,
+})
+-- Load custom tree-sitter grammar for org filetype
+require('orgmode').setup_ts_grammar()
+require('org-idle.org-idle').setup()
+-- This shouldn't be necessary but it seems to get wonky sometimes
+vim.api.nvim_create_autocmd({"WinNew", "WinEnter"}, {
+	pattern={"orgagenda"},
+	callback=function(ev)
+		vim.cmd("resize 10")
+		vim.api.nvim_win_set_option(0, "winfixheight", true)
+		-- Reset cmdheight, since this can screw with that
+		vim.o.cmdheight = 1
+		vim.wo.conceallevel=2
+		vim.wo.concealcursor='nvc'
+	end
 })
 
 local util = require 'lspconfig.util'
@@ -110,41 +123,48 @@ configs.ast_grep = {
 --end
 
 local setup_lsp = function(client, bufnr, use_formatter)
-	if not use_formatter then
+	-- We want to prefer Prettier over type-specific formatters
+	if client.name == "tsserver" then
 		client.server_capabilities.documentFormattingProvider = false
 		client.server_capabilities.documentRangeFormattingProvider = false
+
+		local filetype = vim.filetype.match({ buf = bufnr })
+		local ignoredCodes = (filetype and vim.startswith(filetype, "javascript")) and {
+			7044, -- Parameter type inference
+			7047, -- Same?
+			80001, -- CommonJS module
+			6133, -- delared-not-used, duplicative of linting and incorrect for React
+			-- Not enough info:
+			2339, -- property does not exist
+			2349, -- expression is not callable
+			2306, -- not a module
+			2304, -- cannot find name
+			2552, -- cannot find name w/ suggestion?
+		} or {}
+
+		client.notify('workspace/didChangeConfiguration', {
+			diagnostics = {
+				ignoredCodes = ignoredCodes
+			}
+		})
+	else
+		print(vim.inspect(client))
 	end
 
-	local filetype = vim.filetype.match({ buf = bufnr })
-	local ignoredCodes = (filetype and vim.startswith(filetype, "javascript")) and {
-		7044, -- Parameter type inference
-		7047, -- Same?
-		80001, -- CommonJS module
-		6133, -- delared-not-used, duplicative of linting and incorrect for React
-		-- Not enough info:
-		2339, -- property does not exist
-		2349, -- expression is not callable
-		2306, -- not a module
-	} or {}
-
-	client.notify('workspace/didChangeConfiguration', {
-		diagnostics = {
-			ignoredCodes = ignoredCodes
-		}
-	})
-
 	-- See `:help nvim_buf_set_keymap()` for more information
-	vim.api.nvim_buf_set_keymap(0, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
-	vim.api.nvim_buf_set_keymap(0, 'n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
+	vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
+	vim.api.nvim_buf_set_keymap(bufnr, 'n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
 	-- ... and other keymappings for LSP
 
 	-- Use LSP as the handler for omnifunc.
 	--		See `:help omnifunc` and `:help ins-completion` for more information.
-	vim.api.nvim_buf_set_option(0, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+	vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
 	-- Use LSP as the handler for formatexpr.
 	--		See `:help formatexpr` for more information.
-	vim.api.nvim_buf_set_option(0, 'formatexpr', 'v:lua.vim.lsp.formatexpr')
+	vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr')
+
+	--vim.lsp.buf.inlay_hint(bufnr, true)
 
 	-- For plugins with an `on_attach` callback, call them here. For example:
 	-- require('completion').on_attach()
@@ -220,7 +240,7 @@ require('trouble').setup{
 }
 
 require("null-ls").setup({
-	on_attach = function(client, bufnr) setup_lsp(client, bufnr, true) end,
+	on_attach = setup_lsp,
 	sources = {
 		--require("null-ls").builtins.diagnostics.eslint,
 		--require("null-ls").builtins.code_actions.eslint_d,
@@ -247,7 +267,7 @@ require('eslint').setup({
 })
 
 require('prettier').setup({
-	bin = 'prettier', -- or `prettierd`
+	bin = 'prettierd',
 	filetypes = {
 		"css",
 		"graphql",
@@ -268,18 +288,41 @@ require('prettier').setup({
 require'telescope'.setup{
 	defaults = {
 		path_display={"smart"}
-	}
+	},
+	extensions = {
+		ast_grep = {
+			command = {
+				"sg",
+				"--json=stream",
+			},
+			grep_open_files = false,
+			lang = nil,
+		}
+	},
 }
-require('telescope').load_extension('fzf')
+require'telescope'.load_extension'fzf'
 require'telescope'.load_extension'repo'
+require'telescope'.load_extension'ast_grep'
 
-require('nvim-test').setup({
-	runners = {
-		javascript = "nvim-test.runners.mocha",
-	}
-})
+--require('nvim-test').setup({
+--	runners = {
+--		javascript = "nvim-test.runners.mocha",
+--	}
+--})
+
+--require('nvim-test.runners.mocha'):setup({
+--	command = "npm test",
+--	args = {},
+--	env = {},
+--	find_files = {"test/{name}.{ext}"},
+--})
 
 require('coverage').setup()
 
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 require('print_table')
+
+function rerequire(path)
+	package.loaded[path] = nil
+	return require(path)
+end

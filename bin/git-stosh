@@ -1,0 +1,62 @@
+#!/bin/bash -e
+
+NS=stosh
+ADDFLAG=-u
+
+while [[ "$1" == "-"* ]]; do
+  case "$1" in
+    --staged)
+      STAGED=1
+      shift
+      ;;
+    -p)
+      ADDFLAG=-p
+      shift
+      ;;
+  esac
+done
+
+case "$1" in
+  list)
+    git branch --list "$NS/*"
+    exit
+    ;;
+  pop)
+    RECENT=$(git branch --list --sort=committerdate $NS/* | tail -n1)
+    git cherry-pick $RECENT
+    exit
+    ;;
+esac
+
+function dup_branch() {
+  prefix=$1
+  git branch --list "$prefix*" \
+    | sort -n | tail -n1
+}
+
+NAME=$1
+if [[ -z $NAME ]]; then
+  NAME=$(date +'%Y%m%d%H%M%S')
+fi
+
+BRANCH="$NS/$NAME";
+
+last=$(dup_branch $BRANCH)
+if [[ -n $last ]]; then
+  BRANCH=$(echo $last | awk -F'.' '{print $1"."($2+1)}')
+fi
+
+RETURN_TO=$(git branch --show-current)
+if [[ -z "$RETURN_TO" ]]; then
+  RETURN_TO=$(git rev-parse HEAD)
+fi
+
+if [[ -n $STAGED ]]; then
+  echo "Not yet implemented"
+else
+  git add $ADDFLAG
+  git checkout -q -b $BRANCH
+  git commit -m "Stoshed changes"
+  git checkout -q $RETURN_TO
+  echo "Stashed as $BRANCH"
+fi
