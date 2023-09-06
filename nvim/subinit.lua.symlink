@@ -267,7 +267,7 @@ require('eslint').setup({
 })
 
 require('prettier').setup({
-	bin = 'prettier', -- or `prettierd`
+	bin = 'prettierd',
 	filetypes = {
 		"css",
 		"graphql",
