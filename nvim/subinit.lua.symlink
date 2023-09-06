@@ -1,7 +1,7 @@
--- vim: set noet
+-- vim:noet:sw=2:ts=2
 -- Custom keys
 --vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
---vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
+
 --vim.keymap.set('n', '<Leader>ep', vim.diagnostic.goto_prev)
 
 vim.keymap.set('n', '<Leader>es', vim.diagnostic.show)
@@ -11,7 +11,6 @@ vim.keymap.set('n', '<Leader>ep', function() vim.diagnostic.goto_prev({severity=
 vim.keymap.set('n', '<Leader>ew', "<cmd>Trouble<cr>")
 vim.keymap.set('n', '<Leader>ei', vim.diagnostic.open_float)
 vim.keymap.set('n', '<Leader>i', vim.lsp.buf.hover)
--- TODO: When nvim 8.0 comes out replace this with format()
 vim.keymap.set('n', '<Leader>q', vim.lsp.buf.format)
 
 -- Load custom tree-sitter grammar for org filetype
@@ -270,7 +269,7 @@ require'telescope'.setup{
 		path_display={"smart"}
 	}
 }
-require('telescope').load_extension('fzf')
+require'telescope'.load_extension'fzf'
 require'telescope'.load_extension'repo'
 
 require('nvim-test').setup({
@@ -283,3 +282,8 @@ require('coverage').setup()
 
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 require('print_table')
+
+function rerequire(path)
+	package.loaded[path] = nil
+	return require(path)
+end
