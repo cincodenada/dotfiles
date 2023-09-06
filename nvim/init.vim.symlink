@@ -25,6 +25,8 @@ Plug 'nvim-telescope/telescope-symbols.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 "Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'cljoly/telescope-repo.nvim'
+Plug 'Marskey/telescope-sg'
+Plug '$HOME/.dotfiles/vim/myplugs/nvim-sg'
 
 Plug 'ellisonleao/glow.nvim', {'branch': 'main'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }

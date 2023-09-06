@@ -89,9 +89,11 @@ if mt == nil then
   setmetatable(_G, mt)
 end
 
--- set hook for undefined variables
-mt.__index = function(t, cmd)
-	return command(cmd)
+M.registerGlobalHandler = function()
+	-- set hook for undefined variables
+	mt.__index = function(t, cmd)
+		return command(cmd)
+	end
 end
 
 -- export command() function and configurable temporary "input" file

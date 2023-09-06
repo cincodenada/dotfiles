@@ -283,7 +283,17 @@ require('prettier').setup({
 require'telescope'.setup{
 	defaults = {
 		path_display={"smart"}
-	}
+	},
+	extensions = {
+		ast_grep = {
+			command = {
+				"sg",
+				"--json=stream",
+			},
+			grep_open_files = false,
+			lang = nil,
+		}
+	},
 }
 require'telescope'.load_extension'fzf'
 require'telescope'.load_extension'repo'
@@ -293,6 +303,7 @@ require('nvim-test').setup({
 		javascript = "nvim-test.runners.mocha",
 	}
 })
+require'telescope'.load_extension'ast_grep'
 
 require('coverage').setup()
 

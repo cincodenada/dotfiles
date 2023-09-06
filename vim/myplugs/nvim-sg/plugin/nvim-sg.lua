@@ -56,7 +56,7 @@ local function call_sg(opts)
     end
     local input = vim.fn.join(inputlines, "\n")
     local result = sg({__input=input}, unpack(sgargs))
-    -- print(vim.inspect(result), input, vim.inspect(sgargs))
+    --print(vim.inspect(result), input, vim.inspect(sgargs))
     if result then
         local lines = vim.split(tostring(result), "\n", { trimempty = true })
         --print(vim.inspect(lines))
