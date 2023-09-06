@@ -13,9 +13,6 @@ vim.keymap.set('n', '<Leader>ei', vim.diagnostic.open_float)
 vim.keymap.set('n', '<Leader>i', vim.lsp.buf.hover)
 vim.keymap.set('n', '<Leader>q', vim.lsp.buf.format)
 
--- Load custom tree-sitter grammar for org filetype
-require('orgmode').setup_ts_grammar()
-
 -- Temp fix for javascript indenting
 -- https://github.com/nvim-treesitter/nvim-treesitter/issues/1167
 function _G.javascript_indent()
@@ -72,20 +69,39 @@ local ft_to_parser = require('nvim-treesitter.parsers').filetype_to_parsername
 ft_to_parser.kdl = "kdl"
 
 require('orgmode').setup({
-	org_agenda_files = {'~/Sync/org/*'},
-	org_default_notes_file = '~/Sync/org/refile.org',
+	org_agenda_files = { '~/Sync/org/**/*' },
+	org_default_notes_file = '~/Sync/org/tailormed/tofile.org',
 	mappings = {
 		org = {
 			org_toggle_checkbox = '<Leader>cc',
 			org_meta_return = '<cr>',
+			org_open_at_point = 'gx',
 		}
 	},
+	win_split_mode = "topleft 10new +:set\\ winfixheight",
 	org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
-	org_agenda_templates = {
+	org_capture_templates = {
 		t = { description = 'Task', template = "* TODO %?\n  %u" },
 		f = { description = 'File Task', template = "* TODO %?\n	%u\n	%a" },
 	},
 	org_blank_before_new_entry = { heading = false },
+	--org_agenda_skip_scheduled_if_done = true,
+	--org_agenda_skip_deadline_if_done = true,
+})
+-- Load custom tree-sitter grammar for org filetype
+require('orgmode').setup_ts_grammar()
+require('org-idle.org-idle').setup()
+-- This shouldn't be necessary but it seems to get wonky sometimes
+vim.api.nvim_create_autocmd({"WinNew", "WinEnter"}, {
+	pattern={"orgagenda"},
+	callback=function(ev)
+		vim.cmd("resize 10")
+		vim.api.nvim_win_set_option(0, "winfixheight", true)
+		-- Reset cmdheight, since this can screw with that
+		vim.o.cmdheight = 1
+		vim.wo.conceallevel=2
+		vim.wo.concealcursor='nvc'
+	end
 })
 
 local util = require 'lspconfig.util'
