@@ -297,13 +297,20 @@ require'telescope'.setup{
 }
 require'telescope'.load_extension'fzf'
 require'telescope'.load_extension'repo'
-
-require('nvim-test').setup({
-	runners = {
-		javascript = "nvim-test.runners.mocha",
-	}
-})
 require'telescope'.load_extension'ast_grep'
+
+--require('nvim-test').setup({
+--	runners = {
+--		javascript = "nvim-test.runners.mocha",
+--	}
+--})
+
+--require('nvim-test.runners.mocha'):setup({
+--	command = "npm test",
+--	args = {},
+--	env = {},
+--	find_files = {"test/{name}.{ext}"},
+--})
 
 require('coverage').setup()
 

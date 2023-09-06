@@ -32,6 +32,7 @@ Plug 'ellisonleao/glow.nvim', {'branch': 'main'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 Plug 'folke/trouble.nvim'
+Plug 'klen/nvim-test'
 
 Plug 'Shougo/ddc-nvim-lsp'
 
