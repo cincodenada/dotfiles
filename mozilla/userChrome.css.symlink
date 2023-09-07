@@ -17,7 +17,13 @@
   flex-basis: 1px;
   flex-grow: 1;
 }
+#PersonalToolbar {
+  flex-basis: 100%;
+}
 .titlebar-buttonbox-container {
   padding-right: 1em;
   background: var(--toolbar-bgcolor);
+}
+#titlebar {
+  display: none;
 }
