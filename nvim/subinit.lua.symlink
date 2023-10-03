@@ -122,34 +122,39 @@ configs.ast_grep = {
 --	end
 --end
 --
-local function filter_diagnostics(idx, diagnostic)
-	local tsIgnoreCodes = {
-		7044, -- Parameter type inference
-		7047, -- Same?
-		80001, -- CommonJS module
-		6133, -- delared-not-used, duplicative of linting and incorrect for React
-		2686, -- UMD global in module
-		-- Not enough info:
-		2339, -- property does not exist
-		2349, -- expression is not callable
-		2306, -- not a module
-		2304, -- cannot find name
-		2552, -- cannot find name w/ suggestion?
-	}
 
-	local filetype = vim.filetype.match({ buf = bufnr })
+local function filter_diagnostics(ctx)
+	return function (diagnostic)
+		local tsIgnoreCodes = {
+			7044, -- Parameter type inference
+			7047, -- Same?
+			80001, -- CommonJS module
+			6133, -- delared-not-used, duplicative of linting and incorrect for React
+			2686, -- UMD global in module
+			-- Not enough info:
+			2339, -- property does not exist
+			2349, -- expression is not callable
+			2306, -- not a module
+			2304, -- cannot find name
+			2552, -- cannot find name w/ suggestion?
+		}
 
-	if diagnostic.source == "typescript" then
-		if vim.startswith(filetype, "javascript") and vim.tbl_contains(tsIgnoreCodes, diagnostic.code) then
-			return false
+		-- TODO: Figure out how to get filetype of this diag
+		--local filetype = vim.filetype.match({ buf = ctx.bufnr })
+
+		if diagnostic.source == "typescript" then
+			--if vim.startswith(filetype, "javascript") and vim.tbl_contains(tsIgnoreCodes, diagnostic.code) then
+			if vim.tbl_contains(tsIgnoreCodes, diagnostic.code) then
+				return false
+			end
 		end
+		return true
 	end
-	return true
 end
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
 	function(_, result, ctx, config)
-		vim.fn.filter(result.diagnostics, filter_diagnostics)
+		result.diagnostics = vim.tbl_filter(filter_diagnostics(ctx), result.diagnostics)
 		vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
 	end,
 	{}
