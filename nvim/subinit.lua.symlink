@@ -76,7 +76,7 @@ require('orgmode').setup({
 			org_open_at_point = 'gx',
 		}
 	},
-	win_split_mode = "topleft 10new +:set\\ winfixheight",
+	win_split_mode = "topleft 10new",
 	org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
 	org_capture_templates = {
 		t = { description = 'Task', template = "* TODO %?\n  %u" },
@@ -90,17 +90,17 @@ require('orgmode').setup({
 require('orgmode').setup_ts_grammar()
 require('org-idle.org-idle').setup()
 -- This shouldn't be necessary but it seems to get wonky sometimes
-vim.api.nvim_create_autocmd({"WinNew", "WinEnter"}, {
-	pattern={"orgagenda"},
-	callback=function(ev)
-		vim.cmd("resize 10")
-		vim.api.nvim_win_set_option(0, "winfixheight", true)
-		-- Reset cmdheight, since this can screw with that
-		vim.o.cmdheight = 1
-		vim.wo.conceallevel=2
-		vim.wo.concealcursor='nvc'
-	end
-})
+--vim.api.nvim_create_autocmd({"WinNew", "WinEnter"}, {
+--	pattern={"orgagenda"},
+--	callback=function(ev)
+--		vim.cmd("resize 10")
+--		vim.api.nvim_win_set_option(0, "winfixheight", true)
+--		-- Reset cmdheight, since this can screw with that
+--		vim.o.cmdheight = 1
+--		vim.wo.conceallevel=2
+--		vim.wo.concealcursor='nvc'
+--	end
+--})
 
 local util = require 'lspconfig.util'
 local configs = require 'lspconfig.configs'
