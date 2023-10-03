@@ -121,34 +121,45 @@ configs.ast_grep = {
 --		vim.cmd("tag <cword>")
 --	end
 --end
+--
+local function filter_diagnostics(diagnostic)
+	local tsIgnoreCodes = {
+		7044, -- Parameter type inference
+		7047, -- Same?
+		80001, -- CommonJS module
+		6133, -- delared-not-used, duplicative of linting and incorrect for React
+		2686, -- UMD global in module
+		-- Not enough info:
+		2339, -- property does not exist
+		2349, -- expression is not callable
+		2306, -- not a module
+		2304, -- cannot find name
+		2552, -- cannot find name w/ suggestion?
+	}
+
+	local filetype = nvim_buf_get_option(diagnostic.bufnr, "filetype")
+
+  if diagnostic.source == "tsserver" then
+		if startswith(filetype, "javascript") and tbl_contains(tsIgnoreCodes, diagnostic.code) then
+			return false
+		end
+  end
+  return true
+end
+
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+  function(_, result, ctx, config)
+    filter(result.diagnostics, filter_diagnostics)
+    vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+  end,
+  {}
+)
 
 local setup_lsp = function(client, bufnr, use_formatter)
 	-- We want to prefer Prettier over type-specific formatters
 	if client.name == "tsserver" then
 		client.server_capabilities.documentFormattingProvider = false
 		client.server_capabilities.documentRangeFormattingProvider = false
-
-		local filetype = vim.filetype.match({ buf = bufnr })
-		local ignoredCodes = (filetype and vim.startswith(filetype, "javascript")) and {
-			7044, -- Parameter type inference
-			7047, -- Same?
-			80001, -- CommonJS module
-			6133, -- delared-not-used, duplicative of linting and incorrect for React
-			-- Not enough info:
-			2339, -- property does not exist
-			2349, -- expression is not callable
-			2306, -- not a module
-			2304, -- cannot find name
-			2552, -- cannot find name w/ suggestion?
-		} or {}
-
-		client.notify('workspace/didChangeConfiguration', {
-			diagnostics = {
-				ignoredCodes = ignoredCodes
-			}
-		})
-	else
-		print(vim.inspect(client))
 	end
 
 	-- See `:help nvim_buf_set_keymap()` for more information
