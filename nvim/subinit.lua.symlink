@@ -122,7 +122,7 @@ configs.ast_grep = {
 --	end
 --end
 --
-local function filter_diagnostics(diagnostic)
+local function filter_diagnostics(idx, diagnostic)
 	local tsIgnoreCodes = {
 		7044, -- Parameter type inference
 		7047, -- Same?
@@ -137,22 +137,22 @@ local function filter_diagnostics(diagnostic)
 		2552, -- cannot find name w/ suggestion?
 	}
 
-	local filetype = nvim_buf_get_option(diagnostic.bufnr, "filetype")
+	local filetype = vim.filetype.match({ buf = bufnr })
 
-  if diagnostic.source == "tsserver" then
-		if startswith(filetype, "javascript") and tbl_contains(tsIgnoreCodes, diagnostic.code) then
+	if diagnostic.source == "typescript" then
+		if vim.startswith(filetype, "javascript") and vim.tbl_contains(tsIgnoreCodes, diagnostic.code) then
 			return false
 		end
-  end
-  return true
+	end
+	return true
 end
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
-  function(_, result, ctx, config)
-    filter(result.diagnostics, filter_diagnostics)
-    vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
-  end,
-  {}
+	function(_, result, ctx, config)
+		vim.fn.filter(result.diagnostics, filter_diagnostics)
+		vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+	end,
+	{}
 )
 
 local setup_lsp = function(client, bufnr, use_formatter)
