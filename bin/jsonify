@@ -1,0 +1,5 @@
+#!/bin/bash -eo pipefail
+tmp=$(mktemp)
+trap "rm $tmp" EXIT
+json5 "$1" > $tmp
+jq . $tmp > "$1"

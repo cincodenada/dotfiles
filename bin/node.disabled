@@ -1,0 +1,9 @@
+#!/bin/zsh
+if [ -n "$DOTFILES_NODE_LOOP" ]; then
+  echo "We're in a loop! Exiting"
+  exit 1
+fi
+
+set -e
+nvm use
+DOTFILES_NODE_LOOP=1 node "$@"
