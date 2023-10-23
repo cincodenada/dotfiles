@@ -132,11 +132,11 @@ local function filter_diagnostics(ctx)
 			6133, -- delared-not-used, duplicative of linting and incorrect for React
 			2686, -- UMD global in module
 			-- Not enough info:
-			2339, -- property does not exist
-			2349, -- expression is not callable
-			2306, -- not a module
-			2304, -- cannot find name
-			2552, -- cannot find name w/ suggestion?
+			--2339, -- property does not exist
+			--2349, -- expression is not callable
+			--2306, -- not a module
+			--2304, -- cannot find name
+			--2552, -- cannot find name w/ suggestion?
 		}
 
 		-- TODO: Figure out how to get filetype of this diag
@@ -263,7 +263,9 @@ require("null-ls").setup({
 		require("null-ls").builtins.diagnostics.eslint_d,
 		require("null-ls").builtins.formatting.eslint_d,
 		require("null-ls").builtins.completion.spell,
-		require("null-ls").builtins.formatting.prettier,
+		require("null-ls").builtins.formatting.prettier.with({
+			disabled_filetypes = {"jsonc"},
+		}),
 	},
 	root_dir = util.root_pattern("package.json", ".git")
 })
