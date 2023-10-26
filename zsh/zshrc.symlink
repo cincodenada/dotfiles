@@ -55,3 +55,4 @@ unset config_files
 #PATH=$(echo $PATH | perl -pe 's/^[^:]+\.nvm[^:]+://g')
 
 #zprof
+if [ -e /home/joel/.nix-profile/etc/profile.d/nix.sh ]; then . /home/joel/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
