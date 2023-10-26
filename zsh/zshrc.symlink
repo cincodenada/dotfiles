@@ -54,5 +54,5 @@ unset config_files
 # So strip off NVM from the beginning of $PATH
 #PATH=$(echo $PATH | perl -pe 's/^[^:]+\.nvm[^:]+://g')
 
-source $HOME/.tailormed.zsh
 #zprof
+if [ -e /home/joel/.nix-profile/etc/profile.d/nix.sh ]; then . /home/joel/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
