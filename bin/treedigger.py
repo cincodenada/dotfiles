@@ -42,6 +42,9 @@ class RepoInfo:
     self.prvcache = {}
 
   def get_pkgs(self, specs):
+    for s in specs:
+      print('LOOKUP', s, self.prvcache.get(s, 'MISSING'))
+
     return set([self.prvcache.get(s, f'MISSING:{s}') for s in specs])
 
   def get_deps(self, pkg):
@@ -67,7 +70,7 @@ class RepoInfo:
 class RepoFile(RepoInfo):
   def __init__(self, repofile):
     super().__init__()
-    self.pkgMatch = re.compile(r"=Pkg: (\w+)")
+    self.pkgMatch = re.compile(r"=Pkg: (\S+)")
     self.initState()
     self.read_repofile(repofile)
 
@@ -79,6 +82,8 @@ class RepoFile(RepoInfo):
 
   def add_pkg(self):
     self.depcache[self.pkg] = self.requires
+    if self.pkg == "perl":
+      print(self.provides)
     for p in self.provides:
       self.prvcache[p] = self.pkg
     
