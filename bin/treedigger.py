@@ -44,26 +44,35 @@ class RepoInfo:
   def get_pkgs(self, specs):
     return set([self.prvcache[s] for s in specs])
 
-  def get_deps(self, pkg, indent=""):
-    return self.depmap[pkg]
+  def get_deps(self, pkg):
+    return self.depcache[pkg]
 
-  def resolve_deps(self, pkg, indent=""):
+  def resolve_deps(self, pkg):
     if pkg not in self.depmap:
       self.depmap[pkg] = set()
       specs = self.get_deps(pkg)
-      curpkgs = self.get_pkgs(specs)
+      print(specs)
+      self.depmap[pkg] = self.get_pkgs(specs)
+      print(self.depmap[pkg])
     return self.depmap[pkg]
 
   def print_tree(self, pkg, indent=""):
     print(f"{indent}{pkg}")
-    for dep in self.get_deps(pkg, indent):
+    for dep in self.resolve_deps(pkg):
       self.print_tree(dep, indent + " ")
 
 class RepoFile(RepoInfo):
   def __init__(self, repofile):
-    super()
+    super().__init__()
     self.pkgMatch = re.compile(r"=Pkg: (\w+)")
+    self.initState()
     self.read_repofile(repofile)
+
+  def initState(self, pkg = None):
+    self.pkg = pkg
+    self.mode = None
+    self.provides = []
+    self.requires = []
 
   def add_pkg(self):
     self.depcache[self.pkg] = self.requires
@@ -74,15 +83,12 @@ class RepoFile(RepoInfo):
     pkgresult = self.pkgMatch.match(line)
     if pkgresult:
       self.add_pkg()
-      self.pkg = pkgresult[1]
-      self.mode = None
-      self.provides = []
-      self.requires = []
+      self.initState(pkgresult[1])
       return
     if line == "+Prv:":
       self.mode = "prv"
       return
-    if line == "+Req"
+    if line == "+Req:":
       self.mode = "req"
       return
     if line[0] in ['+', '-', '=']:
@@ -92,12 +98,12 @@ class RepoFile(RepoInfo):
     parts = line.split(" ")
     if self.mode == "prv":
       self.provides.append(parts[0])
-    else if self.mode == "req":
+    elif self.mode == "req":
       self.requires.append(parts[0])
 
-  def read_repofile(self):
+  def read_repofile(self, repofile):
     for line in open(repofile, 'r'):
-      self.parse_line(line)
+      self.parse_line(line.strip())
 
 class ZypperCli(RepoInfo):
   def get_pkgs(self, specs):
