@@ -1,6 +1,7 @@
 #!/bin/env python3
 import sys
 from sh import zypper, awk
+import re
 
 parse_reqs = """
 rq==1 && $1 { print $1 }
@@ -34,13 +35,73 @@ def striplines(lines):
 def info(msg, indent):
   print(indent + msg, file=sys.stderr)
 
-class DepTree:
+class RepoInfo:
   def __init__(self):
     self.depmap = {}
-    self.pkgcache = {}
+    self.depcache = {}
+    self.prvcache = {}
 
   def get_pkgs(self, specs):
-    todo = [s for s in specs if s not in self.pkgcache]
+    return set([self.prvcache[s] for s in specs])
+
+  def get_deps(self, pkg, indent=""):
+    return self.depmap[pkg]
+
+  def resolve_deps(self, pkg, indent=""):
+    if pkg not in self.depmap:
+      self.depmap[pkg] = set()
+      specs = self.get_deps(pkg)
+      curpkgs = self.get_pkgs(specs)
+    return self.depmap[pkg]
+
+  def print_tree(self, pkg, indent=""):
+    print(f"{indent}{pkg}")
+    for dep in self.get_deps(pkg, indent):
+      self.print_tree(dep, indent + " ")
+
+class RepoFile(RepoInfo):
+  def __init__(self, repofile):
+    super()
+    self.pkgMatch = re.compile(r"=Pkg: (\w+)")
+    self.read_repofile(repofile)
+
+  def add_pkg(self):
+    self.depcache[self.pkg] = self.requires
+    for p in self.provides:
+      self.prvcache[p] = self.pkg
+    
+  def parse_line(self, line):
+    pkgresult = self.pkgMatch.match(line)
+    if pkgresult:
+      self.add_pkg()
+      self.pkg = pkgresult[1]
+      self.mode = None
+      self.provides = []
+      self.requires = []
+      return
+    if line == "+Prv:":
+      self.mode = "prv"
+      return
+    if line == "+Req"
+      self.mode = "req"
+      return
+    if line[0] in ['+', '-', '=']:
+      self.mode = None
+      return
+
+    parts = line.split(" ")
+    if self.mode == "prv":
+      self.provides.append(parts[0])
+    else if self.mode == "req":
+      self.requires.append(parts[0])
+
+  def read_repofile(self):
+    for line in open(repofile, 'r'):
+      self.parse_line(line)
+
+class ZypperCli(RepoInfo):
+  def get_pkgs(self, specs):
+    todo = [s for s in specs if s not in self.prvcache]
     if len(todo):
       provspecs = striplines(awk(
         parse_provides,
@@ -50,25 +111,15 @@ class DepTree:
       for spec in provspecs:
         (pkg, provlist) = spec.split("=", 1)
         for prov in provlist.split(","):
-          self.pkgcache[prov] = pkg
-    return set([self.pkgcache[s] for s in specs])
+          self.prvcache[prov] = pkg
+    return set([self.prvcache[s] for s in specs])
 
   def get_deps(self, pkg, indent=""):
-    if pkg not in self.depmap:
+    if pkg not in self.depcache:
       nextindent=indent + " "
       info(f"Fetching deps for {pkg}", indent)
       reqs = striplines(awk(parse_reqs, _in=zypper("-t", "info", "--requires", pkg)))
       info(f"Fetching packages for deps: {','.join(reqs)}", indent)
-      self.depmap[pkg] = set()
-      curpkgs = self.get_pkgs(reqs)
-      info(f"Adding to queue: {curpkgs}", nextindent)
-      self.depmap[pkg].update(curpkgs)
+    return self.depcache[pkg]
 
-    return  self.depmap[pkg]
-
-  def print_tree(self, pkg, indent=""):
-    print(f"{indent}{pkg}")
-    for dep in self.get_deps(pkg, indent):
-      self.print_tree(dep, indent + " ")
-
-DepTree().print_tree(sys.argv[1])
+RepoFile('/tmp/systemrepo.txt').print_tree(sys.argv[1])
