@@ -48,10 +48,12 @@ class RepoInfo:
     return self.depcache[pkg]
 
   def resolve_deps(self, pkg):
+    print(f"Resolving deps for {pkg}")
     if pkg not in self.depmap:
       self.depmap[pkg] = set()
       specs = self.get_deps(pkg)
-      self.depmap[pkg] = self.get_pkgs(specs)
+      # TODO: Not totally sure why this happens
+      self.depmap[pkg] = [p for p in self.get_pkgs(specs) if p != pkg]
     return self.depmap[pkg]
 
   def print_tree(self, pkg, indent=""):
