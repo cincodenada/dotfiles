@@ -25,7 +25,7 @@ parse_provides = """
 """
 
 def striplines(lines):
-  return [l.strip() for l in lines.strip().split("\n")]
+  return [l.strip() for l in lines.strip().split("\n") if l]
 
 def info(msg, indent):
   print(indent + msg, file=sys.stderr)
@@ -33,6 +33,12 @@ def info(msg, indent):
 class DepTree:
   def __init__(self):
     self.depmap = {}
+    self.pkgcache = {}
+
+  def get_pkg(self, spec):
+    if spec not in self.pkgcache:
+      self.pkgcache[spec] = striplines(awk(parse_provides, _in=zypper("-t", "wp", spec)))
+    return self.pkgcache[spec]
 
   def get_deps(self, pkg, indent=""):
     if pkg not in self.depmap:
@@ -40,12 +46,12 @@ class DepTree:
       info(f"Fetching deps for {pkg}", indent)
       reqs = striplines(awk(parse_reqs, _in=zypper("-t", "info", "--requires", pkg)))
       info(f"Fetching packages for deps: {','.join(reqs)}", indent)
-      self.depmap[pkg] = []
+      self.depmap[pkg] = set()
       for spec in reqs:
         info(f"Fetching packages for {spec}...", nextindent)
-        curpkgs=striplines(awk(parse_provides, _in=zypper("-t", "wp", spec)))
+        curpkgs = self.get_pkg(spec)
         info(f"Adding to queue: {curpkgs}", nextindent)
-        self.depmap[pkg]+=curpkgs
+        self.depmap[pkg].update(curpkgs)
 
     return  self.depmap[pkg]
 
