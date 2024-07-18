@@ -15,11 +15,15 @@ rq==1 && $1 { print $1 }
 
 parse_provides = """
 /package/ && t==1 {
+  print
   if($1 == "|") {
-    print $2
+    printf "%s=", $2
   } else {
-    print $3
+    printf "%s=", $3
   }
+}
+/provides/ && t==1 {
+  printf "%s,", $2
 }
 /^-/ { t=1 }
 """
@@ -35,10 +39,18 @@ class DepTree:
     self.depmap = {}
     self.pkgcache = {}
 
-  def get_pkg(self, spec):
-    if spec not in self.pkgcache:
-      self.pkgcache[spec] = striplines(awk(parse_provides, _in=zypper("-t", "wp", spec)))
-    return self.pkgcache[spec]
+  def get_pkgs(self, specs):
+    todo = [s for s in specs if s not in self.pkgcache]
+    if len(todo):
+      provspecs = striplines(awk(
+        parse_provides,
+        _in=zypper("-t", "search", "--provides", "--match-exact", "-i", "-v", *todo)
+      ))
+      for spec in provspec:
+        (pkg, provlist) = spec.split("=", 1)
+        for prov in provlist.split(","):
+          self.pkgcache[prov] = pkg
+    return set([self.pkgcache[s] for s in specs])
 
   def get_deps(self, pkg, indent=""):
     if pkg not in self.depmap:
@@ -47,11 +59,9 @@ class DepTree:
       reqs = striplines(awk(parse_reqs, _in=zypper("-t", "info", "--requires", pkg)))
       info(f"Fetching packages for deps: {','.join(reqs)}", indent)
       self.depmap[pkg] = set()
-      for spec in reqs:
-        info(f"Fetching packages for {spec}...", nextindent)
-        curpkgs = self.get_pkg(spec)
-        info(f"Adding to queue: {curpkgs}", nextindent)
-        self.depmap[pkg].update(curpkgs)
+      curpkgs = self.get_pkgs(reqs)
+      info(f"Adding to queue: {curpkgs}", nextindent)
+      self.depmap[pkg].update(curpkgs)
 
     return  self.depmap[pkg]
 
