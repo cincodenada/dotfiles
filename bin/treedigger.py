@@ -7,7 +7,7 @@ rq==1 && $1 { print $1 }
 /Requires/ {
   if($3 ~ /^\[/) {
     rq=1
-  } else if($3 ~ /^[^-]/) {
+  } else if($3 ~ /^[^-\(]/) {
     print $3
   }
 }
