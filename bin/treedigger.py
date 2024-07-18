@@ -15,12 +15,12 @@ rq==1 && $1 { print $1 }
 
 parse_provides = """
 /package/ && t==1 {
-  print
   if($1 == "|") {
-    printf "%s=", $2
+    pkg=$2
   } else {
-    printf "%s=", $3
+    pkg=$3
   }
+  printf "\\n%s=", pkg
 }
 /provides/ && t==1 {
   printf "%s,", $2
@@ -46,7 +46,8 @@ class DepTree:
         parse_provides,
         _in=zypper("-t", "search", "--provides", "--match-exact", "-i", "-v", *todo)
       ))
-      for spec in provspec:
+      print(provspecs)
+      for spec in provspecs:
         (pkg, provlist) = spec.split("=", 1)
         for prov in provlist.split(","):
           self.pkgcache[prov] = pkg
