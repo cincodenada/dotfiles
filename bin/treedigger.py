@@ -42,7 +42,7 @@ class RepoInfo:
     self.prvcache = {}
 
   def get_pkgs(self, specs):
-    return set([self.prvcache[s] for s in specs])
+    return set([self.prvcache.get(s, f'MISSING:{s}') for s in specs])
 
   def get_deps(self, pkg):
     return self.depcache[pkg]
@@ -51,15 +51,16 @@ class RepoInfo:
     if pkg not in self.depmap:
       self.depmap[pkg] = set()
       specs = self.get_deps(pkg)
-      print(specs)
       self.depmap[pkg] = self.get_pkgs(specs)
-      print(self.depmap[pkg])
     return self.depmap[pkg]
 
   def print_tree(self, pkg, indent=""):
     print(f"{indent}{pkg}")
     for dep in self.resolve_deps(pkg):
-      self.print_tree(dep, indent + " ")
+      if re.match("MISSING", dep):
+        print(f"{indent} {dep}")
+      else:
+        self.print_tree(dep, indent + " ")
 
 class RepoFile(RepoInfo):
   def __init__(self, repofile):
