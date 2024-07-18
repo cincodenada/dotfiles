@@ -30,21 +30,28 @@ def striplines(lines):
 def info(msg, indent):
   print(indent + msg, file=sys.stderr)
 
-def get_deps(pkg, indent=""):
-  nextindent=indent + "  "
-  info(f"Fetching deps for {pkg}", indent)
-  print(f"{indent}{pkg}(")
-  reqs = striplines(awk(parse_reqs, _in=zypper("-t", "info", "--requires", pkg)))
-  info(f"Fetching packages for deps: {','.join(reqs)}", indent)
-  nextpkgs=[]
-  for spec in reqs:
-    info(f"Fetching packages for {spec}...", nextindent)
-    curpkgs=striplines(awk(parse_provides, _in=zypper("-t", "wp", spec)))
-    info(f"Adding to queue: {curpkgs}", nextindent)
-    nextpkgs+=curpkgs
+class DepTree:
+  def __init__(self):
+    self.depmap = {}
 
-  for pkg in nextpkgs:
-    get_deps(pkg, nextindent)
+  def get_deps(self, pkg, indent=""):
+    if pkg not in self.depmap:
+      nextindent=indent + " "
+      info(f"Fetching deps for {pkg}", indent)
+      reqs = striplines(awk(parse_reqs, _in=zypper("-t", "info", "--requires", pkg)))
+      info(f"Fetching packages for deps: {','.join(reqs)}", indent)
+      self.depmap[pkg] = []
+      for spec in reqs:
+        info(f"Fetching packages for {spec}...", nextindent)
+        curpkgs=striplines(awk(parse_provides, _in=zypper("-t", "wp", spec)))
+        info(f"Adding to queue: {curpkgs}", nextindent)
+        self.depmap[pkg]+=curpkgs
 
-get_deps(sys.argv[1])
+    return  self.depmap[pkg]
 
+  def print_tree(self, pkg, indent=""):
+    print(f"{indent}{pkg}")
+    for dep in self.get_deps(pkg, indent):
+      self.print_tree(dep, indent + " ")
+
+DepTree().print_tree(sys.argv[1])
