@@ -147,8 +147,6 @@ local setup_lsp = function(client, bufnr, use_formatter)
 				ignoredCodes = ignoredCodes
 			}
 		})
-	else
-		print(vim.inspect(client))
 	end
 
 	-- See `:help nvim_buf_set_keymap()` for more information
