@@ -276,6 +276,7 @@ require'lspconfig'.stylelint_lsp.setup{
 		stylCelintplus = {}
 	}
 }
+require'lspconfig'.clangd.setup{}
 
 require'lspconfig'.rust_analyzer.setup{
   settings = {

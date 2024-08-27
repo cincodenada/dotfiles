@@ -53,7 +53,6 @@ Plug 'pangloss/vim-javascript'
 Plug 'GutenYe/json5.vim'
 Plug 'arzg/vim-sh'
 Plug 'Galicarnax/vim-regex-syntax'
-Plug 'godlygeek/tabular'
 "Plug 'preservim/vim-markdown'
 Plug 'chrisbra/Colorizer'
 Plug 'imsnif/kdl.vim'
@@ -67,6 +66,8 @@ Plug 'altercation/vim-colors-solarized'
 " Handy QOL stuff
 Plug 'nacitar/a.vim'
 Plug 'gitusp/yanked-buffer'
+Plug 'godlygeek/tabular'
+Plug 'Thyrum/vim-stabs'
 
 " Url linking
 Plug 'vim-scripts/utl.vim'
@@ -75,11 +76,7 @@ Plug 'vim-scripts/utl.vim'
 Plug 'markonm/traces.vim'
 "
 " Completion
-Plug 'Shougo/ddc.vim'
 Plug 'vim-denops/denops.vim'
-Plug 'Shougo/ddc-matcher_head'
-Plug 'Shougo/ddc-sorter_rank'
-Plug 'Shougo/ddc-ui-native'
 
 if !has('nvim')
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
