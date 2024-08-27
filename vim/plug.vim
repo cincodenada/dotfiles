@@ -75,11 +75,7 @@ Plug 'vim-scripts/utl.vim'
 Plug 'markonm/traces.vim'
 "
 " Completion
-Plug 'Shougo/ddc.vim'
 Plug 'vim-denops/denops.vim'
-Plug 'Shougo/ddc-matcher_head'
-Plug 'Shougo/ddc-sorter_rank'
-Plug 'Shougo/ddc-ui-native'
 
 if !has('nvim')
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
