@@ -55,3 +55,10 @@ unset config_files
 #PATH=$(echo $PATH | perl -pe 's/^[^:]+\.nvm[^:]+://g')
 
 #zprof
+
+# bun completions
+[ -s "/home/ell/.bun/_bun" ] && source "/home/ell/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
