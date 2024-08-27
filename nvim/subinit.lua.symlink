@@ -88,7 +88,7 @@ require('orgmode').setup({
 })
 -- Load custom tree-sitter grammar for org filetype
 require('orgmode').setup_ts_grammar()
-require('org-idle.org-idle').setup()
+--require('org-idle.org-idle').setup()
 -- This shouldn't be necessary but it seems to get wonky sometimes
 --vim.api.nvim_create_autocmd({"WinNew", "WinEnter"}, {
 --	pattern={"orgagenda"},
