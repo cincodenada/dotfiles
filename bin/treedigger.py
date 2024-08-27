@@ -3,6 +3,8 @@ import sys
 from sh import zypper, awk
 import re
 
+ind = "  "
+
 parse_reqs = """
 rq==1 && $1 { print $1 }
 /Requires/ {
@@ -42,20 +44,15 @@ class RepoInfo:
     self.prvcache = {}
 
   def get_pkgs(self, specs):
-    for s in specs:
-      print('LOOKUP', s, self.prvcache.get(s, 'MISSING'))
-
     return set([self.prvcache.get(s, f'MISSING:{s}') for s in specs])
 
   def get_deps(self, pkg):
     return self.depcache[pkg]
 
   def resolve_deps(self, pkg):
-    print(f"Resolving deps for {pkg}")
     if pkg not in self.depmap:
       self.depmap[pkg] = set()
       specs = self.get_deps(pkg)
-      # TODO: Not totally sure why this happens
       self.depmap[pkg] = [p for p in self.get_pkgs(specs) if p != pkg]
     return self.depmap[pkg]
 
@@ -63,9 +60,9 @@ class RepoInfo:
     print(f"{indent}{pkg}")
     for dep in self.resolve_deps(pkg):
       if re.match("MISSING", dep):
-        print(f"{indent} {dep}")
+        print(f"{indent}{ind}{dep}")
       else:
-        self.print_tree(dep, indent + " ")
+        self.print_tree(dep, indent + ind)
 
 class RepoFile(RepoInfo):
   def __init__(self, repofile):
@@ -82,8 +79,6 @@ class RepoFile(RepoInfo):
 
   def add_pkg(self):
     self.depcache[self.pkg] = self.requires
-    if self.pkg == "perl":
-      print(self.provides)
     for p in self.provides:
       self.prvcache[p] = self.pkg
     
@@ -104,6 +99,9 @@ class RepoFile(RepoInfo):
       return
 
     parts = line.split(" ")
+    if parts[0].startswith("rpmlib("):
+      return
+
     if self.mode == "prv":
       self.provides.append(parts[0])
     elif self.mode == "req":
