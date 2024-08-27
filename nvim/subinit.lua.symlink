@@ -76,7 +76,7 @@ require('orgmode').setup({
 			org_open_at_point = 'gx',
 		}
 	},
-	win_split_mode = "topleft 10new +:set\\ winfixheight",
+	win_split_mode = "topleft 10new",
 	org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
 	org_capture_templates = {
 		t = { description = 'Task', template = "* TODO %?\n  %u" },
@@ -88,19 +88,19 @@ require('orgmode').setup({
 })
 -- Load custom tree-sitter grammar for org filetype
 require('orgmode').setup_ts_grammar()
-require('org-idle.org-idle').setup()
+--require('org-idle.org-idle').setup()
 -- This shouldn't be necessary but it seems to get wonky sometimes
-vim.api.nvim_create_autocmd({"WinNew", "WinEnter"}, {
-	pattern={"orgagenda"},
-	callback=function(ev)
-		vim.cmd("resize 10")
-		vim.api.nvim_win_set_option(0, "winfixheight", true)
-		-- Reset cmdheight, since this can screw with that
-		vim.o.cmdheight = 1
-		vim.wo.conceallevel=2
-		vim.wo.concealcursor='nvc'
-	end
-})
+--vim.api.nvim_create_autocmd({"WinNew", "WinEnter"}, {
+--	pattern={"orgagenda"},
+--	callback=function(ev)
+--		vim.cmd("resize 10")
+--		vim.api.nvim_win_set_option(0, "winfixheight", true)
+--		-- Reset cmdheight, since this can screw with that
+--		vim.o.cmdheight = 1
+--		vim.wo.conceallevel=2
+--		vim.wo.concealcursor='nvc'
+--	end
+--})
 
 local util = require 'lspconfig.util'
 local configs = require 'lspconfig.configs'
@@ -121,32 +121,50 @@ configs.ast_grep = {
 --		vim.cmd("tag <cword>")
 --	end
 --end
+--
+
+local function filter_diagnostics(ctx)
+	return function (diagnostic)
+		local tsIgnoreCodes = {
+			7044, -- Parameter type inference
+			7047, -- Same?
+			80001, -- CommonJS module
+			6133, -- delared-not-used, duplicative of linting and incorrect for React
+			2686, -- UMD global in module
+			-- Not enough info:
+			--2339, -- property does not exist
+			--2349, -- expression is not callable
+			--2306, -- not a module
+			--2304, -- cannot find name
+			--2552, -- cannot find name w/ suggestion?
+		}
+
+		-- TODO: Figure out how to get filetype of this diag
+		--local filetype = vim.filetype.match({ buf = ctx.bufnr })
+
+		if diagnostic.source == "typescript" then
+			--if vim.startswith(filetype, "javascript") and vim.tbl_contains(tsIgnoreCodes, diagnostic.code) then
+			if vim.tbl_contains(tsIgnoreCodes, diagnostic.code) then
+				return false
+			end
+		end
+		return true
+	end
+end
+
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+	function(_, result, ctx, config)
+		result.diagnostics = vim.tbl_filter(filter_diagnostics(ctx), result.diagnostics)
+		vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+	end,
+	{}
+)
 
 local setup_lsp = function(client, bufnr, use_formatter)
 	-- We want to prefer Prettier over type-specific formatters
 	if client.name == "tsserver" then
 		client.server_capabilities.documentFormattingProvider = false
 		client.server_capabilities.documentRangeFormattingProvider = false
-
-		local filetype = vim.filetype.match({ buf = bufnr })
-		local ignoredCodes = (filetype and vim.startswith(filetype, "javascript")) and {
-			7044, -- Parameter type inference
-			7047, -- Same?
-			80001, -- CommonJS module
-			6133, -- delared-not-used, duplicative of linting and incorrect for React
-			-- Not enough info:
-			2339, -- property does not exist
-			2349, -- expression is not callable
-			2306, -- not a module
-			2304, -- cannot find name
-			2552, -- cannot find name w/ suggestion?
-		} or {}
-
-		client.notify('workspace/didChangeConfiguration', {
-			diagnostics = {
-				ignoredCodes = ignoredCodes
-			}
-		})
 	end
 
 	-- See `:help nvim_buf_set_keymap()` for more information
@@ -245,7 +263,9 @@ require("null-ls").setup({
 		require("null-ls").builtins.diagnostics.eslint_d,
 		require("null-ls").builtins.formatting.eslint_d,
 		require("null-ls").builtins.completion.spell,
-		require("null-ls").builtins.formatting.prettier,
+		require("null-ls").builtins.formatting.prettier.with({
+			disabled_filetypes = {"jsonc"},
+		}),
 	},
 	root_dir = util.root_pattern("package.json", ".git")
 })
@@ -255,6 +275,16 @@ require'lspconfig'.stylelint_lsp.setup{
 	settings = {
 		stylCelintplus = {}
 	}
+}
+
+require'lspconfig'.rust_analyzer.setup{
+  settings = {
+    ['rust-analyzer'] = {
+      diagnostics = {
+--        enable = false;
+      }
+    }
+  }
 }
 
 require('eslint').setup({

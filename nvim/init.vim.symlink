@@ -8,7 +8,7 @@ source ~/.dotfiles/vim/plug.vim
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-orgmode/orgmode'
-Plug 'mdietrich16/org-idle'
+"Plug 'mdietrich16/org-idle'
 
 Plug 'nvim-lua/plenary.nvim'
 
