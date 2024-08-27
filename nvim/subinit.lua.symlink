@@ -277,6 +277,16 @@ require'lspconfig'.stylelint_lsp.setup{
 	}
 }
 
+require'lspconfig'.rust_analyzer.setup{
+  settings = {
+    ['rust-analyzer'] = {
+      diagnostics = {
+--        enable = false;
+      }
+    }
+  }
+}
+
 require('eslint').setup({
 	bin = 'eslint_d',
 	code_actions = {
