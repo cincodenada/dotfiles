@@ -133,7 +133,7 @@ install_dotfiles () {
 
       if [ "$backup" == "true" ] || [ "$backup_all" == "true" ]
       then
-        mv "$dest" "$dest\.backup"
+        mv "$dest" "$dest.backup"
         success "moved $dest to $dest.backup"
       fi
 
