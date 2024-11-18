@@ -1,4 +1,6 @@
-zmodload zsh/zprof
+if [ -n "$ENABLE_ZPROF" ]; then
+  zmodload zsh/zprof
+fi
 # shortcut to this dotfiles path is $DOTFILES
 export DOTFILES=$HOME/.dotfiles
 
