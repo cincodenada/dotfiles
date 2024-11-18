@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 PICS=$(comm -13 \
   <(cat $HOME/.bgratings | cut -f2 | tr -d "'" | sort) \
   <(ls -1 $HOME/Pictures/apod/* | sort)
