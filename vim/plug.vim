@@ -62,6 +62,7 @@ Plug 'vim-scripts/mayansmoke'
 Plug 'vim-scripts/candycode.vim'
 Plug 'rainux/vim-desert-warm-256'
 Plug 'altercation/vim-colors-solarized'
+Plug 'theacodes/witchhazel'
 
 " Handy QOL stuff
 Plug 'nacitar/a.vim'
