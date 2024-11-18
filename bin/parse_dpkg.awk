@@ -7,5 +7,5 @@
   } else {
     state=$1
   }
-  printf "%s%s@%s\n", state, $2, $3
+  printf "%s %s%s\n", $2, state, $3
 }

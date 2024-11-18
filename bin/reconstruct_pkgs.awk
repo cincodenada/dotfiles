@@ -46,6 +46,6 @@ END {
     } else {
       state="✅"
     }
-    printf "%s%s@%s\n", state, p, version[p]
+    printf "%s %s%s\n", p, state, version[p]
   }
 }
