@@ -1,0 +1,34 @@
+# ~/.profile: executed by the command interpreter for login shells.
+# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
+# exists.
+# see /usr/share/doc/bash/examples/startup-files for examples.
+# the files are located in the bash-doc package.
+
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+#umask 022
+
+export _JAVA_AWT_WM_NONREPARENTING=1
+export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
+
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
+fi
+
+# set PATH so it includes user's private bin directories
+PATH="$HOME/bin:$HOME/.local/bin:$HOME/.dotfiles/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
+
+export TERMINAL="alacritty"
+export YDOTOOL_SOCKET="/tmp/.ydotool_socket"
+if [ -e /home/joel/.nix-profile/etc/profile.d/nix.sh ]; then . /home/joel/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+nohup $HOME/bin/rescuetime.sh > rescuetime.log &
+
+touch $HOME/profile_read
