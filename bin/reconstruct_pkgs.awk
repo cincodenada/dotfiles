@@ -1,5 +1,11 @@
 #!/usr/bin/awk -f
 {
+  delete specs
+  delete pkg
+  delete arch
+  delete basepkg
+  delete first
+  delete second
   patsplit($0, specs, "([^ ]+:[A-Za-z0-9]+) \\([^)]+\\)")
   for(i in specs) {
     split(specs[i], parts, "[: (),]+")
@@ -7,7 +13,7 @@
     arch[i] = parts[2]
     pkg[i] = parts[1]":"parts[2]
     first[i] = parts[3]
-    second[i]=  parts[4]
+    second[i] = parts[4]
   }
 }
 /Install/ {
