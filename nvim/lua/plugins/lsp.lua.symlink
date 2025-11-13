@@ -28,22 +28,20 @@ return {
 	{
 		'neovim/nvim-lspconfig',
 		init = function()
-			vim.lspconfig.configs.ast_grep = {
-				default_config = {
-					cmd = {'sg', 'lsp'};
-					filetypes = {'typescript', 'javascript'};
-					single_file_support = true;
-					--root_dir = util.root_pattern('.git', 'sgconfig.yml');
-				};
-			}
-			vim.lsp.config.stylelint_lsp.setup{
+			vim.lsp.config('ast_grep', {
+				cmd = {'sg', 'lsp'};
+				filetypes = {'typescript', 'javascript'};
+				single_file_support = true;
+				--root_dir = util.root_pattern('.git', 'sgconfig.yml');
+			})
+			vim.lsp.config('stylelint_lsp', {
 				cmd = { "/Users/joel/.nvm/versions/node/v16.17.1/bin/stylelint-lsp", "--stdio" },
 				settings = {
 					stylelintplus = {}
 				}
-			}
-			vim.lsp.config.clangd.setup{}
-			vim.lsp.config.rust_analyzer.setup{
+			})
+			vim.lsp.config('clangd', {})
+			vim.lsp.config('rust_analyzer', {
 				settings = {
 					['rust-analyzer'] = {
 						diagnostics = {
@@ -51,8 +49,8 @@ return {
 						}
 					}
 				}
-			}
-			vim.lsp.config.pyright.setup{}
+			})
+			vim.lsp.config('pyright', {})
 		end,
 	},
 	{
