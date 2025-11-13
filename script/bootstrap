@@ -60,17 +60,19 @@ install_dotfiles () {
   backup_all=false
   skip_all=false
 
-  for source in `find $DOTFILES_ROOT -maxdepth 3 -name \*.symlink`
+  for source in `find $DOTFILES_ROOT -maxdepth 5 -name \*.symlink`
   do
     symname=$(basename "${source%.*}")
     symdir=$(dirname "$source")
     destfile="${source}.dest"
 
+    # Search up the tree for a dir-level destination file
     searchdir="$symdir"
-    while [[ ! -f "$destfile" && "$searchdir" != "$DOTFILES_ROOT" ]]; do
+    while [ ! -f "$destfile" ] && [ "$searchdir" != "$DOTFILES_ROOT" ]; do
       destfile="$searchdir/symlink.dest"
       searchdir=$(dirname "$searchdir")
     done
+    echo "$symdir - $destfile"
     prefix=${symdir#$(dirname "$destfile")}
 
     if [ -f "$destfile" ]; then
@@ -79,7 +81,7 @@ install_dotfiles () {
       else
         dir=$(head -n1 $destfile)
       fi
-      reldest="$dir/$prefix/$symname"
+      reldest="$dir$prefix/$symname"
     else
       reldest=".$symname"
     fi
