@@ -288,6 +288,8 @@ require'lspconfig'.rust_analyzer.setup{
   }
 }
 
+require'lspconfig'.pyright.setup{}
+
 require('eslint').setup({
 	bin = 'eslint_d',
 	code_actions = {

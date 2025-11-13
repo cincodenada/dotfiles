@@ -41,6 +41,7 @@ Plug 'Shougo/ddc-sorter_rank'
 Plug 'Shougo/ddc-ui-native'
 
 Plug 'klen/nvim-test'
+Plug 'subnut/nvim-ghost.nvim'
 call plug#end()
 
 source ~/.vimrc
