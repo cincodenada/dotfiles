@@ -3,7 +3,7 @@
 return {
   {
     'xolox/vim-shell',
-    dependencies = { 'xolox/vim-misc' }
+    dependencies = { 'xolox/vim-misc' },
   },
 
   'tpope/vim-surround',
@@ -113,8 +113,8 @@ return {
         },
       },
       ensure_installed = {'org'}, -- Or run :TSUpdate org
-    }
-    init = function() {
+    },
+    init = function()
       local parser_config = vim.treesitter.parsers.get_parser_configs()
       parser_config.kdl = {
         install_info = {
@@ -122,19 +122,35 @@ return {
           files = { "src/parser.c", "src/scanner.c" },
           branch = "main",
         },
-      }
+      },
       vim.treesitter.language.register("kdl", "kdl")
-    }
+    end,
   },
   --'mdietrich16/org-idle',
 
   'nvim-lua/plenary.nvim',
 
-  'neovim/nvim-lspconfig',
-  'jose-elias-alvarez/typescript.nvim',
-  --'jose-elias-alvarez/nvim-lsp-ts-utils',
-  'jose-elias-alvarez/null-ls.nvim',
-  'MunifTanjim/prettier.nvim',
+  {
+    'MunifTanjim/prettier.nvim',
+    opts = {
+      bin = 'prettierd',
+      filetypes = {
+        "css",
+        "graphql",
+        "html",
+        "javascript",
+        "javascriptreact",
+        "json",
+        "less",
+        "markdown",
+        "scss",
+        "typescript",
+        "typescriptreact",
+        "yaml",
+      },
+      --root_dir = vim.fs.dirname(vim.fs.find({"package.json", ".git"}, { upward=true, limit=1 })),
+    },
+  },
   'MunifTanjim/eslint.nvim',
 
   'andythigpen/nvim-coverage',
@@ -164,6 +180,26 @@ return {
       { "<leader>wf", "<cmd>Telescope lsp_code_actions<cr>" },
       { "<leader>wg", "<cmd>Telescope grep_string<cr>" },
     },
+    opts = {
+      defaults = {
+        path_display={"smart"},
+      },
+      extensions = {
+        ast_grep = {
+          command = {
+            "sg",
+            "--json=stream",
+          },
+          grep_open_files = false,
+          lang = nil,
+        },
+      },
+      init = function()
+        vim.telescope.load_extension'fzf'
+        vim.telescope.load_extension'repo'
+        vim.telescope.load_extension'ast_grep'
+      end,
+    },
   },
   'nvim-telescope/telescope-symbols.nvim',
   { 'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' },
@@ -175,8 +211,30 @@ return {
   { 'ellisonleao/glow.nvim', branch = 'main'},
   { 'iamcco/markdown-preview.nvim', cmd = 'cd app && yarn install'  },
 
-  'folke/trouble.nvim',
-  'klen/nvim-test',
+  { 'folke/trouble.nvim', opts = {
+    icons = false,
+    fold_open = "▼",
+    fold_closed = "▶",
+    indent_lines = false,
+    signs = {
+      error = "⛔️",
+      warning = "⚠️",
+      hint = "🤖",
+      information = "💁",
+    },
+  }},
+  {
+    'klen/nvim-test',
+    -- opts = { runners = { javascript = "nvim-test.runners.mocha", } },
+    -- init = function()
+    --   vim.test.runners.mocha.setup{
+    --     command = "npm test",
+    --     args = {},
+    --     env = {},
+    --     find_files = {"test/{name}.{ext}"},
+    --   }
+    -- end
+  },
 
   'Shougo/ddc.vim',
   'Shougo/ddc-nvim-lsp',
@@ -193,7 +251,7 @@ return {
     ft = { 'org' },
     config = function()
       -- Setup orgmode
-      require('orgmode').setup({
+      vim.orgmode.setup({
         org_agenda_files = '~/Sync/org/**/*',
         org_default_notes_file = '~/Sync/org/refile.org',
   mappings = {
@@ -201,7 +259,7 @@ return {
       org_toggle_checkbox = '<Leader>cc',
       org_meta_return = '<cr>',
       org_open_at_point = 'gx',
-    }
+    },
   },
   win_split_mode = "topleft 10new",
   org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
@@ -221,5 +279,5 @@ return {
       --   ignore_install = { 'org' },
       -- })
     end,
-  }
+  },
 }

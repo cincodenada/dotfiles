@@ -47,18 +47,6 @@ vim.cmd[[autocmd FileType javascript setlocal indentexpr=v:lua.javascript_indent
 --	end
 --})
 
-local util = require 'lspconfig.util'
-local configs = require 'lspconfig.configs'
-
-configs.ast_grep = {
-	default_config = {
-		cmd = {'sg', 'lsp'};
-		filetypes = {'typescript', 'javascript'};
-		single_file_support = true;
-		root_dir = util.root_pattern('.git', 'sgconfig.yml');
-	};
-}
-
 --local fallback_jump = function()
 --	local oldlevel = vim.lsp.log.get_level()
 --	vim.lsp.log.set_level(10)
@@ -105,37 +93,6 @@ vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
 	{}
 )
 
-local setup_lsp = function(client, bufnr, use_formatter)
-	-- We want to prefer Prettier over type-specific formatters
-	if client.name == "tsserver" then
-		client.server_capabilities.documentFormattingProvider = false
-		client.server_capabilities.documentRangeFormattingProvider = false
-	end
-
-	-- See `:help nvim_buf_set_keymap()` for more information
-	vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
-	vim.api.nvim_buf_set_keymap(bufnr, 'n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
-	-- ... and other keymappings for LSP
-
-	-- Use LSP as the handler for omnifunc.
-	--		See `:help omnifunc` and `:help ins-completion` for more information.
-	vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-	-- Use LSP as the handler for formatexpr.
-	--		See `:help formatexpr` for more information.
-	vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr')
-
-	--vim.lsp.buf.inlay_hint(bufnr, true)
-
-	-- For plugins with an `on_attach` callback, call them here. For example:
-	-- require('completion').on_attach()
-end
-
-require('typescript').setup({
-	server = {
-		on_attach = setup_lsp,
-	}
-})
 
 local source_abbrev = {
 	typescript = "TS",
@@ -187,34 +144,6 @@ table.insert(runtime_path, "lua/?/init.lua")
 --	},
 --}
 
-require('trouble').setup{
-	icons = false,
-	fold_open = "▼",
-	fold_closed = "▶",
-	indent_lines = false,
-	signs = {
-		error = "⛔️",
-		warning = "⚠️",
-		hint = "🤖",
-		information = "💁",
-	},
-}
-
-require("null-ls").setup({
-	on_attach = setup_lsp,
-	sources = {
-		--require("null-ls").builtins.diagnostics.eslint,
-		--require("null-ls").builtins.code_actions.eslint_d,
-		require("null-ls").builtins.diagnostics.eslint_d,
-		require("null-ls").builtins.formatting.eslint_d,
-		require("null-ls").builtins.completion.spell,
-		require("null-ls").builtins.formatting.prettier.with({
-			disabled_filetypes = {"jsonc"},
-		}),
-	},
-	root_dir = util.root_pattern("package.json", ".git")
-})
-
 require'lspconfig'.stylelint_lsp.setup{
 	cmd = { "/Users/joel/.nvm/versions/node/v16.17.1/bin/stylelint-lsp", "--stdio" },
 	settings = {
@@ -241,59 +170,6 @@ require('eslint').setup({
 		enable = true,
 	}
 })
-
-require('prettier').setup({
-	bin = 'prettierd',
-	filetypes = {
-		"css",
-		"graphql",
-		"html",
-		"javascript",
-		"javascriptreact",
-		"json",
-		"less",
-		"markdown",
-		"scss",
-		"typescript",
-		"typescriptreact",
-		"yaml",
-	},
-	root_dir = util.root_pattern("package.json", ".git")
-})
-
-require'telescope'.setup{
-	defaults = {
-		path_display={"smart"}
-	},
-	extensions = {
-		ast_grep = {
-			command = {
-				"sg",
-				"--json=stream",
-			},
-			grep_open_files = false,
-			lang = nil,
-		}
-	},
-}
-require'telescope'.load_extension'fzf'
-require'telescope'.load_extension'repo'
-require'telescope'.load_extension'ast_grep'
-
---require('nvim-test').setup({
---	runners = {
---		javascript = "nvim-test.runners.mocha",
---	}
---})
-
---require('nvim-test.runners.mocha'):setup({
---	command = "npm test",
---	args = {},
---	env = {},
---	find_files = {"test/{name}.{ext}"},
---})
-
-require('coverage').setup()
 
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 require('print_table')
