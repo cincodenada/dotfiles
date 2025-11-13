@@ -16,7 +16,7 @@ return {
   --'jceb/vim-orgmode',
   'svermeulen/vim-macrobatics',
 
-  {'jremmen/vim-ripgrep', init=function() vim.g.rg_derive_root=1 end}
+  { 'jremmen/vim-ripgrep', init=function() vim.g.rg_derive_root=1 end },
 
   ------------
   -- IDE stuff
@@ -30,15 +30,15 @@ return {
   'eliba2/vim-node-inspect',
   {
     'heavenshell/vim-jsdoc',
-    ft = ['javascript', 'javascript.jsx','typescript'],
+    ft = {'javascript', 'javascript.jsx','typescript'},
     cmd = 'make install',
-  }
+  },
 
   'idanarye/vim-vebugger',
 
   -- Formatting suff
   -- Dynamic spell checking, so we don't freak out on large files
-  { 'kamykn/spelunker.vim', init=function() vim.g.spelunker_check_type=2 end }
+  { 'kamykn/spelunker.vim', init=function() vim.g.spelunker_check_type=2 end },
 
   --------
   -- Other misc
@@ -81,7 +81,7 @@ return {
   'vim-denops/denops.vim',
 
   -- Below was in .vimrc not plug.vim, I don't remember what I was separating here
-  {'nvim-treesitter/nvim-treesitter', cmd = ':TSUpdate'},
+  { 'nvim-treesitter/nvim-treesitter', cmd = ':TSUpdate' },
   'nvim-orgmode/orgmode',
   --'mdietrich16/org-idle',
 
@@ -97,7 +97,7 @@ return {
   'andythigpen/nvim-coverage',
   'nvim-telescope/telescope.nvim',
   'nvim-telescope/telescope-symbols.nvim',
-  {'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' }
+  { 'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' },
   --'nvim-telescope/telescope-fzy-native.nvim',
   'cljoly/telescope-repo.nvim',
   'Marskey/telescope-sg',
