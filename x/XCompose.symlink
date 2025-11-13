@@ -3,6 +3,8 @@
 # Include the appropriate file from /usr/share/X11/locale
 include "%L"
 
+<Multi_key> <Up> <Up>: \0xff54 Down
+
 <Multi_key> <backslash> <o> <slash>		: "🙌"		# PERSON RAISING BOTH HANDS IN CELEBRATION
 <Multi_key> <i> <n> <f>		: "∞"
 <Multi_key> <p> <i>		: "π"
