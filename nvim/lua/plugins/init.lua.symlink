@@ -257,35 +257,30 @@ return {
     'nvim-orgmode/orgmode',
     event = 'VeryLazy',
     ft = { 'org' },
-    config = function()
-      -- Setup orgmode
-      vim.orgmode.setup({
-        org_agenda_files = '~/Sync/org/**/*',
-        org_default_notes_file = '~/Sync/org/refile.org',
-  mappings = {
-    org = {
-      org_toggle_checkbox = '<Leader>cc',
-      org_meta_return = '<cr>',
-      org_open_at_point = 'gx',
+    opts = {
+      org_agenda_files = '~/Sync/org/**/*',
+      org_default_notes_file = '~/Sync/org/refile.org',
+      mappings = {
+        org = {
+          org_toggle_checkbox = '<Leader>cc',
+          org_meta_return = '<cr>',
+          org_open_at_point = 'gx',
+        },
+      },
+      win_split_mode = "topleft 10new",
+      org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
+      org_capture_templates = {
+        t = { description = 'Task', template = "* TODO %?\n  %u" },
+        f = { description = 'File Task', template = "* TODO %?\n  %u\n  %a" },
+      },
+      org_blank_before_new_entry = { heading = false },
+      --org_agenda_skip_scheduled_if_done = true,
+      --org_agenda_skip_deadline_if_done = true,
     },
-  },
-  win_split_mode = "topleft 10new",
-  org_todo_keywords = { 'TODO', 'DOING', '|', 'DONE' },
-  org_capture_templates = {
-    t = { description = 'Task', template = "* TODO %?\n  %u" },
-    f = { description = 'File Task', template = "* TODO %?\n  %u\n  %a" },
-  },
-  org_blank_before_new_entry = { heading = false },
-  --org_agenda_skip_scheduled_if_done = true,
-  --org_agenda_skip_deadline_if_done = true,
-      })
-
-      -- NOTE: If you are using nvim-treesitter with ~ensure_installed = "all"~ option
       -- add ~org~ to ignore_install
       -- require('nvim-treesitter.configs').setup({
       --   ensure_installed = 'all',
       --   ignore_install = { 'org' },
       -- })
-    end,
   },
 }

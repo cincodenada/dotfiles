@@ -4,6 +4,10 @@ require("config.lazy")
 
 --vim.keymap.set('n', '<Leader>ep', vim.diagnostic.goto_prev)
 
+-- Come on, there's gotta be a better way to do this
+vim.cmd"set t_Co=256"
+vim.cmd"colorscheme desert-warm-256"
+
 vim.keymap.set('n', '<Leader>es', vim.diagnostic.show)
 vim.keymap.set('n', '<Leader>eh', vim.diagnostic.hide)
 vim.keymap.set('n', '<Leader>en', function() vim.diagnostic.goto_next({severity=vim.diagnostic.severity.ERROR}) end )
