@@ -1,5 +1,4 @@
 require("config.lazy")
--- vim:noet:sw=2:ts=2
 -- Custom keys
 --vim.keymap.set('n', '<Leader>en', function() { require('trouble').next({skip_groups=true, jump=true}) })
 
@@ -143,33 +142,6 @@ table.insert(runtime_path, "lua/?/init.lua")
 --		},
 --	},
 --}
-
-require'lspconfig'.stylelint_lsp.setup{
-	cmd = { "/Users/joel/.nvm/versions/node/v16.17.1/bin/stylelint-lsp", "--stdio" },
-	settings = {
-		stylelintplus = {}
-	}
-}
-require'lspconfig'.clangd.setup{}
-
-require'lspconfig'.rust_analyzer.setup{
-  settings = {
-    ['rust-analyzer'] = {
-      diagnostics = {
---        enable = false;
-      }
-    }
-  }
-}
-
-require'lspconfig'.pyright.setup{}
-
-require('eslint').setup({
-	bin = 'eslint_d',
-	code_actions = {
-		enable = true,
-	}
-})
 
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 require('print_table')

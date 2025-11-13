@@ -36,7 +36,7 @@ return {
   {
     'heavenshell/vim-jsdoc',
     ft = {'javascript', 'javascript.jsx','typescript'},
-    cmd = 'make install',
+    build = 'make install',
   },
 
   'idanarye/vim-vebugger',
@@ -151,7 +151,15 @@ return {
       --root_dir = vim.fs.dirname(vim.fs.find({"package.json", ".git"}, { upward=true, limit=1 })),
     },
   },
-  'MunifTanjim/eslint.nvim',
+  {
+    'MunifTanjim/eslint.nvim',
+    opts = {
+      bin = 'eslint_d',
+      code_actions = {
+        enable = true,
+      },
+    },
+  },
 
   'andythigpen/nvim-coverage',
   { 
@@ -202,14 +210,14 @@ return {
     },
   },
   'nvim-telescope/telescope-symbols.nvim',
-  { 'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' },
+  { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
   --'nvim-telescope/telescope-fzy-native.nvim',
   'cljoly/telescope-repo.nvim',
   'Marskey/telescope-sg',
-  '$HOME/.dotfiles/vim/myplugs/nvim-sg',
+  --'$HOME/.dotfiles/vim/myplugs/nvim-sg',
 
   { 'ellisonleao/glow.nvim', branch = 'main'},
-  { 'iamcco/markdown-preview.nvim', cmd = 'cd app && yarn install'  },
+  { 'iamcco/markdown-preview.nvim', build = 'cd app && yarn install'  },
 
   { 'folke/trouble.nvim', opts = {
     icons = false,
