@@ -1,0 +1,40 @@
+-- For now just directly transfer, we can get fancier later
+
+return {
+  {'nvim-treesitter/nvim-treesitter', cmd = ':TSUpdate'},
+'nvim-orgmode/orgmode',
+"'mdietrich16/org-idle',
+
+'nvim-lua/plenary.nvim',
+
+'neovim/nvim-lspconfig',
+'jose-elias-alvarez/typescript.nvim',
+"'jose-elias-alvarez/nvim-lsp-ts-utils',
+'jose-elias-alvarez/null-ls.nvim',
+'MunifTanjim/prettier.nvim',
+'MunifTanjim/eslint.nvim',
+
+'andythigpen/nvim-coverage',
+'nvim-telescope/telescope.nvim',
+'nvim-telescope/telescope-symbols.nvim',
+{'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' }
+"'nvim-telescope/telescope-fzy-native.nvim',
+'cljoly/telescope-repo.nvim',
+'Marskey/telescope-sg',
+'$HOME/.dotfiles/vim/myplugs/nvim-sg',
+
+{ 'ellisonleao/glow.nvim', branch = 'main'},
+{ 'iamcco/markdown-preview.nvim', cmd: 'cd app && yarn install'  },
+
+'folke/trouble.nvim',
+'klen/nvim-test',
+
+'Shougo/ddc.vim',
+'Shougo/ddc-nvim-lsp',
+'Shougo/ddc-matcher_head',
+'Shougo/ddc-sorter_rank',
+'Shougo/ddc-ui-native',
+
+'klen/nvim-test',
+'subnut/nvim-ghost.nvim',
+}
