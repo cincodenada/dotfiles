@@ -1,40 +1,120 @@
 -- For now just directly transfer, we can get fancier later
 
 return {
+  'xolox/vim-misc',
+  'xolox/vim-shell',
+
+  'tpope/vim-surround',
+  'tpope/vim-fugitive',
+  'tpope/vim-sleuth',
+  'tpope/vim-repeat',
+  'tpope/vim-speeddating',
+
+  'simnalamburt/vim-mundo',
+  --'ruanyl/coverage.vim',
+
+  --'jceb/vim-orgmode',
+  'svermeulen/vim-macrobatics',
+
+  {'jremmen/vim-ripgrep', init=function() vim.g.rg_derive_root=1 end}
+
+  ------------
+  -- IDE stuff
+  ------------
+  'honza/vim-snippets',
+
+  -- Git stuff
+  'airblade/vim-gitgutter',
+
+  -- Node stuff
+  'eliba2/vim-node-inspect',
+  {
+    'heavenshell/vim-jsdoc',
+    ft = ['javascript', 'javascript.jsx','typescript'],
+    cmd = 'make install',
+  }
+
+  'idanarye/vim-vebugger',
+
+  -- Formatting suff
+  -- Dynamic spell checking, so we don't freak out on large files
+  { 'kamykn/spelunker.vim', init=function() vim.g.spelunker_check_type=2 end }
+
+  --------
+  -- Other misc
+  --------
+  -- Syntax
+  'bfrg/vim-cpp-modern',
+  'rust-lang/rust.vim',
+  'rodjek/vim-puppet',
+  'justinj/vim-pico8-syntax',
+  'joukevandermaas/vim-ember-hbs',
+  --'jelera/vim-javascript-syntax',
+  'pangloss/vim-javascript',
+  'GutenYe/json5.vim',
+  'arzg/vim-sh',
+  'Galicarnax/vim-regex-syntax',
+  --'preservim/vim-markdown',
+  'chrisbra/Colorizer',
+  'imsnif/kdl.vim',
+
+  -- Colors
+  'vim-scripts/mayansmoke',
+  'vim-scripts/candycode.vim',
+  'rainux/vim-desert-warm-256',
+  'altercation/vim-colors-solarized',
+  'theacodes/witchhazel',
+
+  -- Handy QOL stuff
+  'nacitar/a.vim',
+  'gitusp/yanked-buffer',
+  'godlygeek/tabular',
+  'Thyrum/vim-stabs',
+
+  -- Url linking
+  'vim-scripts/utl.vim',
+
+  -- Searching niceness
+  'markonm/traces.vim',
+  --
+  -- Completion
+  'vim-denops/denops.vim',
+
+  -- Below was in .vimrc not plug.vim, I don't remember what I was separating here
   {'nvim-treesitter/nvim-treesitter', cmd = ':TSUpdate'},
-'nvim-orgmode/orgmode',
-"'mdietrich16/org-idle',
+  'nvim-orgmode/orgmode',
+  --'mdietrich16/org-idle',
 
-'nvim-lua/plenary.nvim',
+  'nvim-lua/plenary.nvim',
 
-'neovim/nvim-lspconfig',
-'jose-elias-alvarez/typescript.nvim',
-"'jose-elias-alvarez/nvim-lsp-ts-utils',
-'jose-elias-alvarez/null-ls.nvim',
-'MunifTanjim/prettier.nvim',
-'MunifTanjim/eslint.nvim',
+  'neovim/nvim-lspconfig',
+  'jose-elias-alvarez/typescript.nvim',
+  --'jose-elias-alvarez/nvim-lsp-ts-utils',
+  'jose-elias-alvarez/null-ls.nvim',
+  'MunifTanjim/prettier.nvim',
+  'MunifTanjim/eslint.nvim',
 
-'andythigpen/nvim-coverage',
-'nvim-telescope/telescope.nvim',
-'nvim-telescope/telescope-symbols.nvim',
-{'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' }
-"'nvim-telescope/telescope-fzy-native.nvim',
-'cljoly/telescope-repo.nvim',
-'Marskey/telescope-sg',
-'$HOME/.dotfiles/vim/myplugs/nvim-sg',
+  'andythigpen/nvim-coverage',
+  'nvim-telescope/telescope.nvim',
+  'nvim-telescope/telescope-symbols.nvim',
+  {'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' }
+  --'nvim-telescope/telescope-fzy-native.nvim',
+  'cljoly/telescope-repo.nvim',
+  'Marskey/telescope-sg',
+  '$HOME/.dotfiles/vim/myplugs/nvim-sg',
 
-{ 'ellisonleao/glow.nvim', branch = 'main'},
-{ 'iamcco/markdown-preview.nvim', cmd: 'cd app && yarn install'  },
+  { 'ellisonleao/glow.nvim', branch = 'main'},
+  { 'iamcco/markdown-preview.nvim', cmd = 'cd app && yarn install'  },
 
-'folke/trouble.nvim',
-'klen/nvim-test',
+  'folke/trouble.nvim',
+  'klen/nvim-test',
 
-'Shougo/ddc.vim',
-'Shougo/ddc-nvim-lsp',
-'Shougo/ddc-matcher_head',
-'Shougo/ddc-sorter_rank',
-'Shougo/ddc-ui-native',
+  'Shougo/ddc.vim',
+  'Shougo/ddc-nvim-lsp',
+  'Shougo/ddc-matcher_head',
+  'Shougo/ddc-sorter_rank',
+  'Shougo/ddc-ui-native',
 
-'klen/nvim-test',
-'subnut/nvim-ghost.nvim',
+  'klen/nvim-test',
+  'subnut/nvim-ghost.nvim',
 }
