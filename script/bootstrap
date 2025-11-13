@@ -149,7 +149,7 @@ install_dotfiles () {
       fi
 
     else
-      mkdir -p "$dest"
+      mkdir -p "$(dirname "$dest")"
       link_files "$source" "$dest"
     fi
 
