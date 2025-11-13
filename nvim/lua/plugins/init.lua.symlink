@@ -27,7 +27,10 @@ return {
   'airblade/vim-gitgutter',
 
   -- Node stuff
-  'eliba2/vim-node-inspect',
+  {
+    'eliba2/vim-node-inspect',
+    ft = {'javascript', 'javascript.jsx','typescript'},
+  },
   {
     'heavenshell/vim-jsdoc',
     ft = {'javascript', 'javascript.jsx','typescript'},
@@ -95,7 +98,33 @@ return {
   'MunifTanjim/eslint.nvim',
 
   'andythigpen/nvim-coverage',
-  'nvim-telescope/telescope.nvim',
+  { 
+    'nvim-telescope/telescope.nvim',
+    keys = {
+      { "<Leader>oo", "<cmd>Telescope find_files cwd=~/Sync/org<CR>" },
+      { "<Leader>oo", "<cmd>Telescope find_files cwd=~/Sync/org<CR>" },
+
+      -- The below were originally nnoremap but I think nmap should be fine
+      -- Find files using Telescope command-line sugar.
+      { "<leader>ff", "<cmd>Telescope find_files<cr>" },
+      { "<leader>fr", "<cmd>Telescope repo<cr>" },
+      { "<leader>fgw", "<cmd>Telescope grep_string<cr>" },
+      { "<leader>fgg", "<cmd>Telescope live_grep<cr>" },
+      { "<leader>fgr", "<cmd>Telescope git_grep<cr>" },
+      { "<leader>fb", "<cmd>Telescope buffers<cr>" },
+      { "<leader>f?", "<cmd>Telescope help_tags<cr>" },
+      { "<leader>fhc", "<cmd>Telescope command_history<cr>" },
+      { "<leader>fhs", "<cmd>Telescope search_history<cr>" },
+
+      { "<leader>fcs", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>" },
+
+      -- Emojiiiii
+      { "<leader>fe", "<cmd>Telescope symbols<cr>" },
+
+      { "<leader>wf", "<cmd>Telescope lsp_code_actions<cr>" },
+      { "<leader>wg", "<cmd>Telescope grep_string<cr>" },
+    },
+  },
   'nvim-telescope/telescope-symbols.nvim',
   { 'nvim-telescope/telescope-fzf-native.nvim', cmd = 'make' },
   --'nvim-telescope/telescope-fzy-native.nvim',
