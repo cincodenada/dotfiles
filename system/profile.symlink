@@ -29,6 +29,4 @@ if [ -e /home/joel/.nix-profile/etc/profile.d/nix.sh ]; then . /home/joel/.nix-p
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-nohup $HOME/bin/rescuetime.sh > rescuetime.log &
-
 touch $HOME/profile_read
