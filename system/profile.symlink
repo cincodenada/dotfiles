@@ -30,3 +30,8 @@ if [ -e /home/joel/.nix-profile/etc/profile.d/nix.sh ]; then . /home/joel/.nix-p
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 touch $HOME/profile_read
+
+# ZVM
+export ZVM_INSTALL="$HOME/.zvm/self"
+export PATH="$PATH:$HOME/.zvm/bin"
+export PATH="$PATH:$ZVM_INSTALL/"
