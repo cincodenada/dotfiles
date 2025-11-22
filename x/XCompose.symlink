@@ -3,8 +3,6 @@
 # Include the appropriate file from /usr/share/X11/locale
 include "%L"
 
-<Multi_key> <Up> <Up>: \0xff54 Down
-
 <Multi_key> <backslash> <o> <slash>		: "🙌"		# PERSON RAISING BOTH HANDS IN CELEBRATION
 <Multi_key> <i> <n> <f>		: "∞"
 <Multi_key> <p> <i>		: "π"
@@ -28,3 +26,194 @@ include "%L"
 
 # IPA Stuff
 <Multi_key> <colon> <comma> : "ː"
+
+# Below was generated from the Unicode Character table entries with the following terrifying regexes:
+#% s/\v(\w+) (\S) ([KH])(.*)ANA LETTER (\w)(\w)$/<Multi_key> \L<\3> <\5> <\6>\E : "\2" U\1 # \3\4ANA LETTER \5\6
+#% s/\v(\w+) (\S) ([KH])(.*)ANA LETTER (\w)$/<Multi_key> \L<\3> <\5>\E : "\2" U\1 # \3\4ANA LETTER \5\6
+#% s/.*SMALL /#&/g
+#% s/.*(not unique)/#&/g
+#% s/\v(\<Multi_key\> \S+).*: (.*LETTER).*\n\= (\w)(\w)(\w)$/\1 \L<\3> <\4> <\5>\E : \2 \3\4\5 (alias)
+#% s/\v(\<Multi_key\> \S+).*: (.*LETTER).*\n\= (\w)(\w)$/\1 \L<\3> <\4>\E : \2 \3\4 (alias)
+
+#3041 ぁ HIRAGANA LETTER SMALL A
+<Multi_key> <h> <a> : "あ" U3042 # HIRAGANA LETTER A
+#3043 ぃ HIRAGANA LETTER SMALL I
+<Multi_key> <h> <i> : "い" U3044 # HIRAGANA LETTER I
+#3045 ぅ HIRAGANA LETTER SMALL U
+<Multi_key> <h> <u> : "う" U3046 # HIRAGANA LETTER U
+#3047 ぇ HIRAGANA LETTER SMALL E
+<Multi_key> <h> <e> : "え" U3048 # HIRAGANA LETTER E
+#3049 ぉ HIRAGANA LETTER SMALL O
+<Multi_key> <h> <o> : "お" U304A # HIRAGANA LETTER O
+<Multi_key> <h> <k> <a> : "か" U304B # HIRAGANA LETTER KA
+<Multi_key> <h> <g> <a> : "が" U304C # HIRAGANA LETTER GA
+<Multi_key> <h> <k> <i> : "き" U304D # HIRAGANA LETTER KI
+<Multi_key> <h> <g> <i> : "ぎ" U304E # HIRAGANA LETTER GI
+<Multi_key> <h> <k> <u> : "く" U304F # HIRAGANA LETTER KU
+<Multi_key> <h> <g> <u> : "ぐ" U3050 # HIRAGANA LETTER GU
+<Multi_key> <h> <k> <e> : "け" U3051 # HIRAGANA LETTER KE
+<Multi_key> <h> <g> <e> : "げ" U3052 # HIRAGANA LETTER GE
+<Multi_key> <h> <k> <o> : "こ" U3053 # HIRAGANA LETTER KO
+<Multi_key> <h> <g> <o> : "ご" U3054 # HIRAGANA LETTER GO
+<Multi_key> <h> <s> <a> : "さ" U3055 # HIRAGANA LETTER SA
+<Multi_key> <h> <z> <a> : "ざ" U3056 # HIRAGANA LETTER ZA
+<Multi_key> <h> <s> <h> <i> : "し" U3057 # HIRAGANA LETTER SHI (alias)
+<Multi_key> <h> <z> <i> : "じ" U3058 # HIRAGANA LETTER ZI
+#= JI (not unique)
+<Multi_key> <h> <s> <u> : "す" U3059 # HIRAGANA LETTER SU
+<Multi_key> <h> <z> <u> : "ず" U305A # HIRAGANA LETTER ZU
+<Multi_key> <h> <s> <e> : "せ" U305B # HIRAGANA LETTER SE
+<Multi_key> <h> <z> <e> : "ぜ" U305C # HIRAGANA LETTER ZE
+<Multi_key> <h> <s> <o> : "そ" U305D # HIRAGANA LETTER SO
+<Multi_key> <h> <z> <o> : "ぞ" U305E # HIRAGANA LETTER ZO
+<Multi_key> <h> <t> <a> : "た" U305F # HIRAGANA LETTER TA
+<Multi_key> <h> <d> <a> : "だ" U3060 # HIRAGANA LETTER DA
+<Multi_key> <h> <c> <h> <i> : "ち" U3061 # HIRAGANA LETTER CHI (alias)
+<Multi_key> <h> <d> <i> : "ぢ" U3062 # HIRAGANA LETTER DI
+#= JI (not unique)
+#3063 っ HIRAGANA LETTER SMALL TU
+#= SMALL TSU
+<Multi_key> <h> <t> <s> <u> : "つ" U3064 # HIRAGANA LETTER TSU (alias)
+<Multi_key> <h> <d> <u> : "づ" U3065 # HIRAGANA LETTER DU
+#= ZU (not unique)
+<Multi_key> <h> <t> <e> : "て" U3066 # HIRAGANA LETTER TE
+<Multi_key> <h> <d> <e> : "で" U3067 # HIRAGANA LETTER DE
+<Multi_key> <h> <t> <o> : "と" U3068 # HIRAGANA LETTER TO
+<Multi_key> <h> <d> <o> : "ど" U3069 # HIRAGANA LETTER DO
+<Multi_key> <h> <n> <a> : "な" U306A # HIRAGANA LETTER NA
+<Multi_key> <h> <n> <i> : "に" U306B # HIRAGANA LETTER NI
+<Multi_key> <h> <n> <u> : "ぬ" U306C # HIRAGANA LETTER NU
+<Multi_key> <h> <n> <e> : "ね" U306D # HIRAGANA LETTER NE
+<Multi_key> <h> <n> <o> : "の" U306E # HIRAGANA LETTER NO
+<Multi_key> <h> <h> <a> : "は" U306F # HIRAGANA LETTER HA
+<Multi_key> <h> <b> <a> : "ば" U3070 # HIRAGANA LETTER BA
+<Multi_key> <h> <p> <a> : "ぱ" U3071 # HIRAGANA LETTER PA
+<Multi_key> <h> <h> <i> : "ひ" U3072 # HIRAGANA LETTER HI
+<Multi_key> <h> <b> <i> : "び" U3073 # HIRAGANA LETTER BI
+<Multi_key> <h> <p> <i> : "ぴ" U3074 # HIRAGANA LETTER PI
+<Multi_key> <h> <f> <u> : "ふ" U3075 # HIRAGANA LETTER FU (alias)
+<Multi_key> <h> <b> <u> : "ぶ" U3076 # HIRAGANA LETTER BU
+<Multi_key> <h> <p> <u> : "ぷ" U3077 # HIRAGANA LETTER PU
+<Multi_key> <h> <h> <e> : "へ" U3078 # HIRAGANA LETTER HE
+<Multi_key> <h> <b> <e> : "べ" U3079 # HIRAGANA LETTER BE
+<Multi_key> <h> <p> <e> : "ぺ" U307A # HIRAGANA LETTER PE
+<Multi_key> <h> <h> <o> : "ほ" U307B # HIRAGANA LETTER HO
+<Multi_key> <h> <b> <o> : "ぼ" U307C # HIRAGANA LETTER BO
+<Multi_key> <h> <p> <o> : "ぽ" U307D # HIRAGANA LETTER PO
+<Multi_key> <h> <m> <a> : "ま" U307E # HIRAGANA LETTER MA
+<Multi_key> <h> <m> <i> : "み" U307F # HIRAGANA LETTER MI
+<Multi_key> <h> <m> <u> : "む" U3080 # HIRAGANA LETTER MU
+<Multi_key> <h> <m> <e> : "め" U3081 # HIRAGANA LETTER ME
+<Multi_key> <h> <m> <o> : "も" U3082 # HIRAGANA LETTER MO
+#3083 ゃ HIRAGANA LETTER SMALL YA
+<Multi_key> <h> <y> <a> : "や" U3084 # HIRAGANA LETTER YA
+#3085 ゅ HIRAGANA LETTER SMALL YU
+<Multi_key> <h> <y> <u> : "ゆ" U3086 # HIRAGANA LETTER YU
+#3087 ょ HIRAGANA LETTER SMALL YO
+<Multi_key> <h> <y> <o> : "よ" U3088 # HIRAGANA LETTER YO
+<Multi_key> <h> <r> <a> : "ら" U3089 # HIRAGANA LETTER RA
+<Multi_key> <h> <r> <i> : "り" U308A # HIRAGANA LETTER RI
+<Multi_key> <h> <r> <u> : "る" U308B # HIRAGANA LETTER RU
+<Multi_key> <h> <r> <e> : "れ" U308C # HIRAGANA LETTER RE
+<Multi_key> <h> <r> <o> : "ろ" U308D # HIRAGANA LETTER RO
+#308E ゎ HIRAGANA LETTER SMALL WA
+<Multi_key> <h> <w> <a> : "わ" U308F # HIRAGANA LETTER WA
+<Multi_key> <h> <w> <i> : "ゐ" U3090 # HIRAGANA LETTER WI
+<Multi_key> <h> <w> <e> : "ゑ" U3091 # HIRAGANA LETTER WE
+<Multi_key> <h> <w> <o> : "を" U3092 # HIRAGANA LETTER WO
+<Multi_key> <h> <n> : "ん" U3093 # HIRAGANA LETTER N
+<Multi_key> <h> <v> <u> : "ゔ" U3094 # HIRAGANA LETTER VU
+<Multi_key> <k> <t> <e> : "テ" U30C6 # KATAKANA LETTER TE
+<Multi_key> <k> <d> <e> : "デ" U30C7 # KATAKANA LETTER DE
+<Multi_key> <k> <t> <o> : "ト" U30C8 # KATAKANA LETTER TO
+<Multi_key> <k> <d> <o> : "ド" U30C9 # KATAKANA LETTER DO
+<Multi_key> <k> <n> <a> : "ナ" U30CA # KATAKANA LETTER NA
+<Multi_key> <k> <n> <i> : "ニ" U30CB # KATAKANA LETTER NI
+<Multi_key> <k> <n> <u> : "ヌ" U30CC # KATAKANA LETTER NU
+<Multi_key> <k> <n> <e> : "ネ" U30CD # KATAKANA LETTER NE
+<Multi_key> <k> <n> <o> : "ノ" U30CE # KATAKANA LETTER NO
+<Multi_key> <k> <h> <a> : "ハ" U30CF # KATAKANA LETTER HA
+<Multi_key> <k> <b> <a> : "バ" U30D0 # KATAKANA LETTER BA
+<Multi_key> <k> <p> <a> : "パ" U30D1 # KATAKANA LETTER PA
+<Multi_key> <k> <h> <i> : "ヒ" U30D2 # KATAKANA LETTER HI
+<Multi_key> <k> <b> <i> : "ビ" U30D3 # KATAKANA LETTER BI
+<Multi_key> <k> <p> <i> : "ピ" U30D4 # KATAKANA LETTER PI
+<Multi_key> <k> <f> <u> : "フ" U30D5 # KATAKANA LETTER FU (alias)
+<Multi_key> <k> <b> <u> : "ブ" U30D6 # KATAKANA LETTER BU
+<Multi_key> <k> <p> <u> : "プ" U30D7 # KATAKANA LETTER PU
+<Multi_key> <k> <h> <e> : "ヘ" U30D8 # KATAKANA LETTER HE
+<Multi_key> <k> <b> <e> : "ベ" U30D9 # KATAKANA LETTER BE
+<Multi_key> <k> <p> <e> : "ペ" U30DA # KATAKANA LETTER PE
+<Multi_key> <k> <h> <o> : "ホ" U30DB # KATAKANA LETTER HO
+<Multi_key> <k> <b> <o> : "ボ" U30DC # KATAKANA LETTER BO
+<Multi_key> <k> <p> <o> : "ポ" U30DD # KATAKANA LETTER PO
+<Multi_key> <k> <m> <a> : "マ" U30DE # KATAKANA LETTER MA
+<Multi_key> <k> <m> <i> : "ミ" U30DF # KATAKANA LETTER MI
+<Multi_key> <k> <m> <u> : "ム" U30E0 # KATAKANA LETTER MU
+<Multi_key> <k> <m> <e> : "メ" U30E1 # KATAKANA LETTER ME
+<Multi_key> <k> <m> <o> : "モ" U30E2 # KATAKANA LETTER MO
+#30E3 ャ KATAKANA LETTER SMALL YA
+<Multi_key> <k> <y> <a> : "ヤ" U30E4 # KATAKANA LETTER YA
+#30E5 ュ KATAKANA LETTER SMALL YU
+<Multi_key> <k> <y> <u> : "ユ" U30E6 # KATAKANA LETTER YU
+#30E7 ョ KATAKANA LETTER SMALL YO
+<Multi_key> <k> <y> <o> : "ヨ" U30E8 # KATAKANA LETTER YO
+<Multi_key> <k> <r> <a> : "ラ" U30E9 # KATAKANA LETTER RA
+<Multi_key> <k> <r> <i> : "リ" U30EA # KATAKANA LETTER RI
+<Multi_key> <k> <r> <u> : "ル" U30EB # KATAKANA LETTER RU
+<Multi_key> <k> <r> <e> : "レ" U30EC # KATAKANA LETTER RE
+<Multi_key> <k> <r> <o> : "ロ" U30ED # KATAKANA LETTER RO
+#30EE ヮ KATAKANA LETTER SMALL WA
+<Multi_key> <k> <w> <a> : "ワ" U30EF # KATAKANA LETTER WA
+<Multi_key> <k> <w> <i> : "ヰ" U30F0 # KATAKANA LETTER WI
+<Multi_key> <k> <w> <e> : "ヱ" U30F1 # KATAKANA LETTER WE
+<Multi_key> <k> <w> <o> : "ヲ" U30F2 # KATAKANA LETTER WO
+<Multi_key> <k> <n> : "ン" U30F3 # KATAKANA LETTER N
+<Multi_key> <k> <v> <u> : "ヴ" U30F4 # KATAKANA LETTER VU
+#30F5 ヵ KATAKANA LETTER SMALL KA
+#30A1 ァ KATAKANA LETTER SMALL A
+<Multi_key> <k> <a> : "ア" U30A2 # KATAKANA LETTER A
+#30A3 ィ KATAKANA LETTER SMALL I
+<Multi_key> <k> <i> : "イ" U30A4 # KATAKANA LETTER I
+#30A5 ゥ KATAKANA LETTER SMALL U
+<Multi_key> <k> <u> : "ウ" U30A6 # KATAKANA LETTER U
+#30A7 ェ KATAKANA LETTER SMALL E
+<Multi_key> <k> <e> : "エ" U30A8 # KATAKANA LETTER E
+#30A9 ォ KATAKANA LETTER SMALL O
+<Multi_key> <k> <o> : "オ" U30AA # KATAKANA LETTER O
+<Multi_key> <k> <k> <a> : "カ" U30AB # KATAKANA LETTER KA
+<Multi_key> <k> <g> <a> : "ガ" U30AC # KATAKANA LETTER GA
+<Multi_key> <k> <k> <i> : "キ" U30AD # KATAKANA LETTER KI
+<Multi_key> <k> <g> <i> : "ギ" U30AE # KATAKANA LETTER GI
+<Multi_key> <k> <k> <u> : "ク" U30AF # KATAKANA LETTER KU
+<Multi_key> <k> <g> <u> : "グ" U30B0 # KATAKANA LETTER GU
+<Multi_key> <k> <k> <e> : "ケ" U30B1 # KATAKANA LETTER KE
+<Multi_key> <k> <g> <e> : "ゲ" U30B2 # KATAKANA LETTER GE
+<Multi_key> <k> <k> <o> : "コ" U30B3 # KATAKANA LETTER KO
+<Multi_key> <k> <g> <o> : "ゴ" U30B4 # KATAKANA LETTER GO
+<Multi_key> <k> <s> <a> : "サ" U30B5 # KATAKANA LETTER SA
+<Multi_key> <k> <z> <a> : "ザ" U30B6 # KATAKANA LETTER ZA
+<Multi_key> <k> <s> <h> <i> : "シ" U30B7 # KATAKANA LETTER SHI (alias)
+<Multi_key> <k> <z> <i> : "ジ" U30B8 # KATAKANA LETTER ZI
+#= JI (not unique)
+<Multi_key> <k> <s> <u> : "ス" U30B9 # KATAKANA LETTER SU
+<Multi_key> <k> <z> <u> : "ズ" U30BA # KATAKANA LETTER ZU
+<Multi_key> <k> <s> <e> : "セ" U30BB # KATAKANA LETTER SE
+<Multi_key> <k> <z> <e> : "ゼ" U30BC # KATAKANA LETTER ZE
+<Multi_key> <k> <s> <o> : "ソ" U30BD # KATAKANA LETTER SO
+<Multi_key> <k> <z> <o> : "ゾ" U30BE # KATAKANA LETTER ZO
+<Multi_key> <k> <t> <a> : "タ" U30BF # KATAKANA LETTER TA
+<Multi_key> <k> <d> <a> : "ダ" U30C0 # KATAKANA LETTER DA
+<Multi_key> <k> <c> <h> <i> : "チ" U30C1 # KATAKANA LETTER CHI (alias)
+<Multi_key> <k> <d> <i> : "ヂ" U30C2 # KATAKANA LETTER DI
+#= JI (not unique)
+#30C3 ッ KATAKANA LETTER SMALL TU
+#= SMALL TSU
+<Multi_key> <k> <t> <s> <u> : "ツ" U30C4 # KATAKANA LETTER TSU (alias)
+<Multi_key> <k> <d> <u> : "ヅ" U30C5 # KATAKANA LETTER DU
+#= ZU (not unique)
+#30F6 ヶ KATAKANA LETTER SMALL KE
+<Multi_key> <k> <v> <a> : "ヷ" U30F7 # KATAKANA LETTER VA
+<Multi_key> <k> <v> <i> : "ヸ" U30F8 # KATAKANA LETTER VI
+<Multi_key> <k> <v> <e> : "ヹ" U30F9 # KATAKANA LETTER VE
+<Multi_key> <k> <v> <o> : "ヺ" U30FA # KATAKANA LETTER VO
